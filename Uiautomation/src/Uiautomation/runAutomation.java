@@ -55,6 +55,7 @@ class RunnableDemo implements Runnable {
 	   public void run() {
 		  List<WebElement> bot;
 		  String actRes;
+		  String uninstallcmd = "adb -s " + executeUdid +" uninstall "+ appPackages;
 		  boolean acceptNextAlert = true;
 		  StringBuffer verificationErrors = new StringBuffer();
 		  int totalCaseNumbers;
@@ -130,7 +131,7 @@ class RunnableDemo implements Runnable {
 							allCP.writeAllResult(execResult, i);
 				    }
 			  }
-			  String uninstallcmd = "adb -s " + executeUdid +" uninstall "+ appPackages;
+			  
 			  try {
 				  Properties prop = System.getProperties();
 				  if (prop.getProperty("os.name") !=null && prop.getProperty("os.name").indexOf("Mac") > -1){ //判断是否为Mac系统
@@ -174,6 +175,8 @@ class RunnableDemo implements Runnable {
 						  		count = count + 1;
 						  	}
 					  }
+					  System.out.print("卸载" + executeUdid + " APP" + "\r\n");
+					  new BufferedReader(new InputStreamReader(runtime.exec(uninstallcmd).getInputStream()));// 卸载APP
 					  System.out.print("关闭设备："+ executeDevicename + " Appium" + "\r\n");
 					  new BufferedReader(new InputStreamReader(runtime.exec("taskkill -f -pid "+ pidlistarray[0]).getInputStream())); //关闭Appium的连接端口
 				  }
@@ -227,6 +230,8 @@ class RunnableDemo implements Runnable {
 							  		count = count + 1;
 							  	}
 						  }
+						  System.out.print("卸载" + executeUdid + " APP" + "\r\n");
+						  new BufferedReader(new InputStreamReader(runtime.exec(uninstallcmd).getInputStream()));// 卸载APP
 						  System.out.print("关闭设备："+ executeDevicename + " Appium" + "\r\n");
 						  new BufferedReader(new InputStreamReader(runtime.exec("taskkill -f -pid "+ pidlistarray[0]).getInputStream())); //关闭Appium的连接端口
 					  }
