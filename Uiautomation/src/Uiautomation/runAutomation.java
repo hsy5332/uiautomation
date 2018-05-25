@@ -154,7 +154,9 @@ class RunnableDemo implements Runnable {
 						  		}
 						  	}
 					  }
-					  System.out.print("关闭设备："+ executeDevicename + " Appium" + "\r\n");
+					  System.out.print("卸载" + executeUdid + " APP" + "\r\n");
+					  new BufferedReader(new InputStreamReader(runtime.exec("/volumes/software/work/eclipse/android/sdk/platform-tools/"+uninstallcmd).getInputStream()));// 卸载APP
+					  System.out.print("关闭设备："+ executeDevicename + " Appium" + "\r\n"); 
 					  new BufferedReader(new InputStreamReader(runtime.exec("kill  "+ pidlistarray[0]).getInputStream())); //关闭Appium的连接端口
 				  }
 				  else{
@@ -185,7 +187,6 @@ class RunnableDemo implements Runnable {
 				  System.out.println("关闭Appium失败，Appium连接设备是："+ executeUdid);
 			  }
 		  }catch (Exception e) {
-			  	//e.printStackTrace();
 				System.out.println("连接设备出错，请检查端口号和连接的设备udid,应该连接的设备是：" + executeUdid + "，端口号："+ executePort);
 				try {
 					Properties prop = System.getProperties();
@@ -209,6 +210,8 @@ class RunnableDemo implements Runnable {
 							  		}
 							  	}
 						  }
+						  System.out.print("卸载" + executeUdid + " APP" + "\r\n");
+						  new BufferedReader(new InputStreamReader(runtime.exec("/volumes/software/work/eclipse/android/sdk/platform-tools/"+uninstallcmd).getInputStream()));// 卸载APP
 						  System.out.print("关闭设备："+ executeDevicename + " Appium" + "\r\n");
 						  new BufferedReader(new InputStreamReader(runtime.exec("kill  "+ pidlistarray[0]).getInputStream())); //关闭Appium的连接端口
 					  }
