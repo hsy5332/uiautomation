@@ -135,6 +135,7 @@ class RunnableDemo implements Runnable {
 			}
 
 			try {
+				Thread.sleep(2000);
 				Properties prop = System.getProperties();
 				if (prop.getProperty("os.name") != null
 						&& prop.getProperty("os.name").indexOf("Mac") > -1) { // 判断是否为Mac系统
@@ -186,16 +187,12 @@ class RunnableDemo implements Runnable {
 							String cmdresult = cmdresults.toString()
 									.replaceAll(" ", ""); // 删除cmd命令结果多余的空格
 							executecmdarray[count] = cmdresult;
-							System.out.println("cmdresult:::"+cmdresult);
-							System.out.println("cmdresult:::"+executecmdarray[count]
-									.split("LISTENING").toString());
-							if (executecmdarray[count]
-									.split("LISTENING").length<2) {
-								
+							if (executecmdarray[count].split("LISTENING").length < 2) {
+
 								pidlistarray[count] = executecmdarray[count]
 										.split("LISTENING")[0];
-							}else {
-								pidlistarray[count]=executecmdarray[count]
+							} else {
+								pidlistarray[count] = executecmdarray[count]
 										.split("LISTENING")[1];
 							}
 							count = count + 1;
@@ -308,23 +305,15 @@ class runAutomation {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
-		} 
-
-//		String[] deviceUdid = test1.str8.split(",");
-		Object[] deviceUdid= GetDevices.getUdid();
-		if (deviceUdid==null||deviceUdid.length<1) {
-			System.out.println("quit ");
+		}
+		
+		Object[] deviceUdid=GetDevices.getUdid();
+		if (deviceUdid == null || deviceUdid.length < 1) {
+			System.out.println("无设备连接");
 			return;
 		}
 		Object[] connectPort = (Object[]) AppiumServerManager
 				.startAppiumServer(deviceUdid.length).toArray();
-	
-		if (connectPort.length > deviceUdid.length) {
-			connectPort = Arrays.copyOfRange(connectPort, 0, deviceUdid.length);
-		}
-		if (deviceUdid.length > connectPort.length) {
-			deviceUdid = Arrays.copyOfRange(deviceUdid, 0, connectPort.length);
-		}
 		String appPackage = test1.appPackage;
 		String appActivity = test1.str11;
 		String platformName = "Android";
@@ -333,8 +322,10 @@ class runAutomation {
 		// 读取Test.properties 配置信息
 
 		if (deviceUdid.length == 1) {
-			RunnableDemo oneDeviceUdid = new RunnableDemo(String.valueOf(deviceUdid[0]),
-					String.valueOf(deviceUdid[0]), String.valueOf(deviceUdid[0]), (int) connectPort[0],
+			RunnableDemo oneDeviceUdid = new RunnableDemo(
+					String.valueOf(deviceUdid[0]),
+					String.valueOf(deviceUdid[0]),
+					String.valueOf(deviceUdid[0]), (int) connectPort[0],
 					appPackage, appActivity, platformName, platformVersion,
 					appPaths);
 			oneDeviceUdid.start();
@@ -343,8 +334,10 @@ class runAutomation {
 			RunnableDemo executedevices[] = new RunnableDemo[deviceUdid.length];
 			int i = 0;
 			while (i < deviceUdid.length) {
-				executedevices[i] = new RunnableDemo(String.valueOf(deviceUdid[i]),
-						String.valueOf(deviceUdid[i]), String.valueOf(deviceUdid[i]), (int)connectPort[i],
+				executedevices[i] = new RunnableDemo(
+						String.valueOf(deviceUdid[i]),
+						String.valueOf(deviceUdid[i]),
+						String.valueOf(deviceUdid[i]), (int) connectPort[i],
 						appPackage, appActivity, platformName, platformVersion,
 						appPaths);
 				executedevices[i].start();
