@@ -101,13 +101,14 @@ class RunnableDemo implements Runnable {
 		capabilities.setCapability("app", appPath);
 		capabilities.setCapability("appPackage", appPackages);
 		capabilities.setCapability("appActivity", appActivitys);
-		capabilities.setCapability("unicodeKeyboard", true);
-		capabilities.setCapability("resetKeyboard", true);
-		capabilities.setCapability("noReset", true);
+		capabilities.setCapability("unicodeKeyboard", "true");
+		capabilities.setCapability("resetKeyboard", "true");
+		capabilities.setCapability("noReset", "true");
+		capabilities.setCapability("noSign", "true");
 		try {
 			String connectlink = "http://127.0.0.1:" + executePort + "/wd/hub";
 			driver = new AndroidDriver(new URL(connectlink), capabilities);
-			driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+			driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
 			for (int i = 0; i < totalCaseNumbers; i++) {
 				Object[] value = records.get(i);
 				String testCaseName = (String) value[1];// 获取测试用例配置文件中的测试用例
@@ -134,7 +135,6 @@ class RunnableDemo implements Runnable {
 				}
 			}
 			try {
-				Thread.sleep(2000);
 				Properties prop = System.getProperties();
 				if (prop.getProperty("os.name") != null
 						&& prop.getProperty("os.name").indexOf("Mac") > -1) { // 判断是否为Mac系统
@@ -313,6 +313,25 @@ class runAutomation {
 		}
 		Object[] connectPort = (Object[]) AppiumServerManager
 				.startAppiumServer(deviceUdid.length).toArray();
+		
+		//判断设备数是否大于端口数 deviceUdid.length 设备数  
+		if (deviceUdid.length > connectPort.length){
+			Object[] realdeviceUdid = new  Object[connectPort.length];
+			for (int deviceUdidcount=0;deviceUdidcount<connectPort.length;deviceUdidcount++){
+				realdeviceUdid[deviceUdidcount] =deviceUdid[deviceUdidcount];
+			}
+			deviceUdid = realdeviceUdid;
+		}
+		
+		if (deviceUdid.length < connectPort.length){
+			Object[] realconnectPort = new  Object[deviceUdid.length];
+			for (int connectPortcount=0;connectPortcount < deviceUdid.length;connectPortcount++){
+				realconnectPort[connectPortcount] =connectPort[connectPortcount];
+			}
+			connectPort = realconnectPort;
+			
+		}
+	
 		String appPackage = test1.appPackage;
 		String appActivity = test1.str11;
 		String platformName = "Android";
