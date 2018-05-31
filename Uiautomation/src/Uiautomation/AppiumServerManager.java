@@ -12,8 +12,10 @@ public class AppiumServerManager {
 	 * @param count
 	 * @return
 	 */
+	
 	public static List<Integer> startAppiumServer(int count) {
 		int[] ports = radomPort(count);
+		Properties prop = System.getProperties();
 		List<Integer> successPorts = new ArrayList<Integer>();
 		if (ports != null) {
 			for (int i = 0; i < ports.length; i++) {
@@ -23,7 +25,20 @@ public class AppiumServerManager {
 				}
 			}
 		}
-		return successPorts;
+		if (prop.getProperty("os.name") != null
+				&& prop.getProperty("os.name").indexOf("Mac") > -1) {
+			test test1 = new test();
+			String[] devicesport = test1.port.split(",");
+			for (int i=0; i < devicesport.length; i++){
+				successPorts.add(Integer.parseInt(devicesport[i]));
+			}
+			System.out.print(successPorts+"\r\n");
+			return successPorts;
+		}
+		else{
+			return successPorts;
+		}
+		
 	}
 
 	/**
@@ -33,20 +48,11 @@ public class AppiumServerManager {
 	 */
 	public static int excuteCmd(int port) {
 		Runtime runtime = Runtime.getRuntime();
-		int defPort = 0;
 		Properties prop = System.getProperties();
+		int defPort = 0;
 		if (prop.getProperty("os.name") != null
 				&& prop.getProperty("os.name").indexOf("Mac") > -1) {
-			try {
-				runtime.exec("appium -a 127.0.0.1 -p "
-						+ port
-						+ " --session-override -dc \"{\"\"noReset\"\": \"\"true\"\"}\"\"");
-				Thread.sleep(2000);
-				defPort = port;
-			} catch (IOException | InterruptedException e) {
-				e.printStackTrace();
-				System.out.println("启动Appium失败，请检查本地端口是否存在。");
-			}
+			defPort = 0;
 		}
 		else{
 			try {
@@ -59,8 +65,10 @@ public class AppiumServerManager {
 				e.printStackTrace();
 				System.out.println("启动Appium失败，请检查本地端口是否存在。");
 			}
+			
 		}
 		return defPort;
+		
 	}
 
 	/**
