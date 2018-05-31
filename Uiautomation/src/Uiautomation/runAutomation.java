@@ -133,7 +133,6 @@ class RunnableDemo implements Runnable {
 					allCP.writeAllResult(execResult, i);
 				}
 			}
-
 			try {
 				Thread.sleep(2000);
 				Properties prop = System.getProperties();

@@ -33,7 +33,6 @@ public class GetDevices {
 						
 					}
 				}
-				System.out.print(deviceslist+"\r\n");
 				deviceslist.remove(0);
 			} catch (IOException e1) {
 				e1.printStackTrace();
