@@ -34,6 +34,7 @@ public class GetDevices {
 					}
 				}
 				deviceslist.remove(0);
+				
 			} catch (IOException e1) {
 				e1.printStackTrace();
 			}

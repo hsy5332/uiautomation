@@ -32,7 +32,6 @@ public class AppiumServerManager {
 			for (int i=0; i < devicesport.length; i++){
 				successPorts.add(Integer.parseInt(devicesport[i]));
 			}
-			System.out.print(successPorts+"\r\n");
 			return successPorts;
 		}
 		else{
