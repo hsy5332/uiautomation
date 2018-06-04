@@ -1,13 +1,12 @@
 package Uiautomation;
-import java.io.File;
+
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Enumeration;
 import java.util.Properties;
-import org.omg.CORBA.portable.InputStream;
 
-public class test{
+public class test {
 	public static String str5;
 	public static String str4;
 	public static String str3;
@@ -22,57 +21,64 @@ public class test{
 	public static String str12;
 	public static String port;
 	public static String appPackage;
-public static void testmethod() throws FileNotFoundException, IOException
-{
-	  Properties pps = new Properties();
-      pps.load(new FileInputStream("Test.properties"));
-      Enumeration enum1 = pps.propertyNames();//得到配置文件名
-      while(enum1.hasMoreElements()) {
-          String strKey = (String) enum1.nextElement();
-          String strValue = pps.getProperty(strKey);
-          if(strKey.equals("path5")){
-              str5=strValue;
-             }   
-          if(strKey.equals("path4")){
-              str4=strValue;
-             }   	
-          if(strKey.equals("path3")){
-          	str3=strValue;
-          }
-          if(strKey.equals("path2")){
-           str2=strValue;
-          }
-          if(strKey.equals("path1")){
-           str1=strValue;
-          }   	
-          if(strKey.equals("path6")){
-            str6=strValue;
-          }   
-          if(strKey.equals("path7")){
-              str7=strValue;
-          }   
-          if(strKey.equals("path8")){
-        	  str8=strValue;
-          }
-          if(strKey.equals("path9")){
-        	  str9=strValue;
-          }
-          if(strKey.equals("path10")){
-        	  str10=strValue;
-          }
-          if(strKey.equals("path11")){
-        	  str11=strValue;
-          }
-          if(strKey.equals("path12")){
-        	  str12=strValue;
-          }
-          if(strKey.equals("port")){
-        	  port=strValue;
-          }
-          if (strKey.equals("appPackage")){
-        	  appPackage=strValue;
-          }
-      }
- }
-}
+	public static String excutesystem;
+	public static String linuxip;
 
+	public static void testmethod() throws FileNotFoundException, IOException {
+		Properties pps = new Properties();
+		pps.load(new FileInputStream("Test.properties"));
+		Enumeration enum1 = pps.propertyNames();// 得到配置文件名
+		while (enum1.hasMoreElements()) {
+			String strKey = (String) enum1.nextElement();
+			String strValue = pps.getProperty(strKey);
+			if (strKey.equals("path5")) {
+				str5 = strValue;
+			}
+			if (strKey.equals("path4")) {
+				str4 = strValue;
+			}
+			if (strKey.equals("path3")) {
+				str3 = strValue;
+			}
+			if (strKey.equals("path2")) {
+				str2 = strValue;
+			}
+			if (strKey.equals("path1")) {
+				str1 = strValue;
+			}
+			if (strKey.equals("path6")) {
+				str6 = strValue;
+			}
+			if (strKey.equals("path7")) {
+				str7 = strValue;
+			}
+			if (strKey.equals("path8")) {
+				str8 = strValue;
+			}
+			if (strKey.equals("path9")) {
+				str9 = strValue;
+			}
+			if (strKey.equals("path10")) {
+				str10 = strValue;
+			}
+			if (strKey.equals("path11")) {
+				str11 = strValue;
+			}
+			if (strKey.equals("path12")) {
+				str12 = strValue;
+			}
+			if (strKey.equals("port")) {
+				port = strValue;
+			}
+			if (strKey.equals("appPackage")) {
+				appPackage = strValue;
+			}
+			if (strKey.equals("excutesystem")) {
+				excutesystem = strValue;
+			}
+			if (strKey.equals("linuxip")) {
+				linuxip = strValue;
+			}
+		}
+	}
+}
