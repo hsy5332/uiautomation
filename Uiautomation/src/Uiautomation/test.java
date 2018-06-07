@@ -23,6 +23,7 @@ public class test {
 	public static String appPackage;
 	public static String excutesystem;
 	public static String linuxip;
+	public static String linuxapkpath;
 
 	public static void testmethod() throws FileNotFoundException, IOException {
 		Properties pps = new Properties();
@@ -78,6 +79,9 @@ public class test {
 			}
 			if (strKey.equals("linuxip")) {
 				linuxip = strValue;
+			}
+			if (strKey.equals("linuxapkpath")) {
+				linuxapkpath = strValue;
 			}
 		}
 	}
