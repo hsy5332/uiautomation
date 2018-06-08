@@ -20,28 +20,29 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 public class excelOperation {
-	   public Date date=new Date();
-	   test test1=new test();
-	   String testCaseName = "";
-		
-	//   String excelPath="F:\\测试报告\\测试日志\\"+String.valueOf(DateUtil.getYear(date))+"-"+String.valueOf(DateUtil.getMonth(date))+"-"+String.valueOf(DateUtil.getDay(date))+"-"+String.valueOf(DateUtil.getHour(date))+"-"+String.valueOf(DateUtil.getMinute(date))+".xlsx";	
-	  
-	 
-	 
-	public  void writeRow(String[] inputFile) {
+	public Date date = new Date();
+	test test1 = new test();
+	String testCaseName = "";
+
+	public void writeRow(String[] inputFile, String executeDevicename) {
 		try {
 			test.testmethod();
-			String result2= test1.str2;
-			//#测试日志存放路径
-			//path2=C\:\\testReport\\testResult\\
-			String excelPath=result2+String.valueOf(dateUtil.getYear(date))+"-"+String.valueOf(dateUtil.getMonth(date))+"-"+String.valueOf(dateUtil.getDay(date))+"-"+String.valueOf(dateUtil.getHour(date))+"-"+String.valueOf(dateUtil.getMinute(date))+testCaseName+".xlsx";	
+			String result2 = test1.str2;
+			// #测试日志存放路径
+			String excelPath = result2 +executeDevicename+"-" 
+					+String.valueOf(dateUtil.getYear(date))+"-"
+					+ String.valueOf(dateUtil.getMonth(date)) + "-"
+					+ String.valueOf(dateUtil.getDay(date)) + "-"
+					+ String.valueOf(dateUtil.getHour(date)) + "-"
+					+ String.valueOf(dateUtil.getMinute(date)) + testCaseName
+					+ ".xlsx";
 			File file = new File(excelPath);
 			InputStream fis = new FileInputStream(file);
 			OPCPackage opcPackage = OPCPackage.open(fis);
 			Workbook wb = new XSSFWorkbook(opcPackage);
 			Sheet sheet = wb.getSheetAt(0);
-			sheet.setColumnWidth(1, 30 * 256);//讲第二列宽度设为30个字符宽度
-			sheet.setColumnWidth(5, 100 * 256);//讲第6列宽度设为100个字符宽度
+			sheet.setColumnWidth(1, 30 * 256);// 讲第二列宽度设为30个字符宽度
+			sheet.setColumnWidth(5, 100 * 256);// 讲第6列宽度设为100个字符宽度
 			Row row = (Row) sheet.getRow(0);
 			FileOutputStream out = new FileOutputStream(excelPath);
 			row = sheet.createRow((sheet.getLastRowNum() + 1));
@@ -50,15 +51,14 @@ public class excelOperation {
 				if (i == 0) {
 					Cell cell = row.createCell(0, Cell.CELL_TYPE_STRING);
 					cell.setCellValue(rowNum);
-				}
-				else {
+				} else {
 					Cell cell = row.createCell(i, Cell.CELL_TYPE_STRING);
-				//	cell.setHyperlink((XSSFHyperlink) cell.getHyperlink());
-					cell.setCellValue(inputFile[i]);//完成写入操作
-					
-		      //      cell.setHyperlink(inputFile[inputFile.length-1]);
+					// cell.setHyperlink((XSSFHyperlink) cell.getHyperlink());
+					cell.setCellValue(inputFile[i]);// 完成写入操作
+
+					// cell.setHyperlink(inputFile[inputFile.length-1]);
 				}
-				}
+			}
 			out.flush();
 			wb.write(out);
 			out.close();
@@ -67,42 +67,45 @@ public class excelOperation {
 			e.printStackTrace();
 		}
 	}
-	public  void writeResult(String stepName, String resultMessage) {
+
+	public void writeResult(String stepName, String resultMessage,
+			String executeDevicename) {
 		try {
-			String[] input = new String[]{ "",stepName,null,null,"",null};
-			if(resultMessage.length()!=0 && (!resultMessage.equals("条件不成立该步骤不执行")))
-			{
+			String[] input = new String[] { "", stepName, null, null, "", null };
+			if (resultMessage.length() != 0
+					&& (!resultMessage.equals("条件不成立该步骤不执行"))) {
 				input[4] = "failure";
-				input[5] = resultMessage; 
-			}
-			else
-			{
+				input[5] = resultMessage;
+			} else {
 				input[4] = "finished";//
-				input[5] = resultMessage; 
+				input[5] = resultMessage;
 			}
-			writeRow(input);//完成写入操作
-					
+			writeRow(input, executeDevicename);// 完成写入操作
+
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
-	public  void writeCheckResult(String stepName, String resultMessage, String chkRes, String actRes, String expRes)
-	{
+
+	public void writeCheckResult(String stepName, String resultMessage,
+			String chkRes, String actRes, String expRes,
+			String executeDevicename) {
 		try {
-			String[] input = new String[]{ "",stepName,actRes,expRes,chkRes,null};
-			if(resultMessage.length()!=0)
-			{
-				
-				input[5] = resultMessage; 
+			String[] input = new String[] { "", stepName, actRes, expRes,
+					chkRes, null };
+			if (resultMessage.length() != 0) {
+
+				input[5] = resultMessage;
 			}
-			writeRow(input);
-					
+			writeRow(input, executeDevicename);
+
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
+
 	public CellStyle getStyle(Workbook workbook) {
 		CellStyle style = workbook.createCellStyle();
 		style.setAlignment(CellStyle.ALIGN_CENTER);
@@ -123,8 +126,8 @@ public class excelOperation {
 		style.setWrapText(true);
 		return style;
 	}
-	public void setCaseName(String CaseName) 
-	{
+
+	public void setCaseName(String CaseName) {
 		testCaseName = CaseName;
 	}
 }
