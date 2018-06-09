@@ -22,8 +22,9 @@ public class test {
 	public static String port;
 	public static String appPackage;
 	public static String excutesystem;
-	public static String linuxip;
+	public static String connectip;
 	public static String linuxapkpath;
+	public static String devicescount;
 
 	public static void testmethod() throws FileNotFoundException, IOException {
 		Properties pps = new Properties();
@@ -77,11 +78,14 @@ public class test {
 			if (strKey.equals("excutesystem")) {
 				excutesystem = strValue;
 			}
-			if (strKey.equals("linuxip")) {
-				linuxip = strValue;
+			if (strKey.equals("connectip")) {
+				connectip = strValue;
 			}
 			if (strKey.equals("linuxapkpath")) {
 				linuxapkpath = strValue;
+			}
+			if (strKey.equals("devicescount")) {
+				devicescount = strValue;
 			}
 		}
 	}

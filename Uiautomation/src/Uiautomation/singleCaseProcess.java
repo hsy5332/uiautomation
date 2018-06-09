@@ -1,48 +1,24 @@
 package Uiautomation;
 
-import io.appium.java_client.android.AndroidDriver;
-
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.InputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.URL;
-import java.util.ArrayList;
+import java.io.InputStream;
 import java.util.List;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
-import org.junit.*;
-
-import static org.junit.Assert.*;
-
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.hssf.util.HSSFColor;
-import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.usermodel.XSSFHyperlink;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
-import org.openqa.selenium.NoSuchWindowException;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.firefox.FirefoxDriver;
-import org.openqa.selenium.interactions.Actions;
-import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import Uiautomation.*;
+import io.appium.java_client.android.AndroidDriver;
 
 /*
  * 获取Excel文件的内容,使用Workbook方式来读取excel，Excel文件的行号和列号都是从0开始的
@@ -59,8 +35,7 @@ public class singleCaseProcess {
 	String actualValue = new String("");; // 检查点步骤，实际值
 	String expectedValue = new String("");; // 检查点步骤，期望值
 	String caseExecResult = "Pass";
-	String phoneNumber, cardNumber, idNumber, readedText, testDataType,
-			totalText;
+	String phoneNumber, cardNumber, idNumber, readedText, testDataType, totalText;
 	String appType; // app项目名称
 	int regNewPhoneNumber = 0;
 	List<WebElement> bot;
@@ -75,8 +50,8 @@ public class singleCaseProcess {
 
 	}
 
-	public void processHandle(File file, AndroidDriver driver,
-			String testCaseName, String executeDevicename) throws IOException {
+	public void processHandle(File file, AndroidDriver driver, String testCaseName, String executeDevicename)
+			throws IOException {
 		try {
 
 			writeHeaderSingleCase(testCaseName, executeDevicename);// 写入单个测试用例执行报告的标题行
@@ -90,7 +65,7 @@ public class singleCaseProcess {
 				workbook = new XSSFWorkbook(inputStream);
 			} catch (IOException e) {
 				e.printStackTrace();
-			}// 解析xlsx格式
+			} // 解析xlsx格式
 			Sheet sheet = workbook.getSheet("Sheet1");// 第一个工作表
 			int rowCount = sheet.getLastRowNum() - sheet.getFirstRowNum();// sheet1数据的行数
 			for (int i = 1; i <= rowCount; i++) {
@@ -109,82 +84,69 @@ public class singleCaseProcess {
 					row.getCell(j).setCellType(Cell.CELL_TYPE_STRING);
 					value[j] = row.getCell(j).getStringCellValue().trim();// 操作类型
 				}
-				stepExec = warpingFunctions.getIfCaseExec(driver, value[0],
-						value[3], stepExec); // 判断该步骤是否需要执行。
+				stepExec = warpingFunctions.getIfCaseExec(driver, value[0], value[3], stepExec); // 判断该步骤是否需要执行。
 				if (stepExec == false) // 如果不需要执行，直接打印该步骤的日志
 				{
 					resultMessage = "条件不成立该步骤不执行";
-					excel.writeResult(value[4], resultMessage,
-							executeDevicename);// 写入单个测试用例单个步骤的执行结果
+					excel.writeResult(value[4], resultMessage, executeDevicename);// 写入单个测试用例单个步骤的执行结果
 				} else // 否则清空错误日志，用例步骤顺序执行
 				{
 					resultMessage = "";
 					switch (value[0]) {
 					case "手势密码_xpath":
 						try {
-							WebDriverWait wait = new WebDriverWait(driver,
-									maxWaitTime);// 最多等待时间由maxWaitTime指定
+							WebDriverWait wait = new WebDriverWait(driver, maxWaitTime);// 最多等待时间由maxWaitTime指定
 							bot = driver.findElements(By.xpath(value[1]));
 							TG.patternLock(value[2], bot, driver);
 						} catch (Exception e) {
 							resultMessage = e.getMessage();
 							caseExecResult = "failure";
 						}
-						excel.writeResult(value[4], resultMessage,
-								executeDevicename);// 写入单个测试用例单个步骤的执行结果
+						excel.writeResult(value[4], resultMessage, executeDevicename);// 写入单个测试用例单个步骤的执行结果
 						break;
 
 					case "滑动屏幕":
 						try {
-							WebDriverWait wait = new WebDriverWait(driver,
-									maxWaitTime);// 最多等待时间由maxWaitTime指定
+							WebDriverWait wait = new WebDriverWait(driver, maxWaitTime);// 最多等待时间由maxWaitTime指定
 							TG.swipeTo(value[1], driver);
 						} catch (Exception e) {
 							resultMessage = e.getMessage();
 							caseExecResult = "failure";
 						}
-						excel.writeResult(value[4], resultMessage,
-								executeDevicename);// 写入单个测试用例单个步骤的执行结果
+						excel.writeResult(value[4], resultMessage, executeDevicename);// 写入单个测试用例单个步骤的执行结果
 						break;
 
 					case "滚动查找点击元素":// 只能第一页查找，不能翻页查找元素
 						try {
-							WebDriverWait wait = new WebDriverWait(driver,
-									maxWaitTime);// 最多等待时间由maxWaitTime指定
+							WebDriverWait wait = new WebDriverWait(driver, maxWaitTime);// 最多等待时间由maxWaitTime指定
 							driver.scrollTo(value[1]).click();
 						} catch (Exception e) {
 							resultMessage = e.getMessage();
 							caseExecResult = "failure";
 						}
-						excel.writeResult(value[4], resultMessage,
-								executeDevicename);// 写入单个测试用例单个步骤的执行结果
+						excel.writeResult(value[4], resultMessage, executeDevicename);// 写入单个测试用例单个步骤的执行结果
 						break;
 
 					case "向下滑动查找元素_id":// 可以翻页查找元素
 						try {
-							WebDriverWait wait = new WebDriverWait(driver,
-									maxWaitTime);// 最多等待时间由maxWaitTime指定
+							WebDriverWait wait = new WebDriverWait(driver, maxWaitTime);// 最多等待时间由maxWaitTime指定
 							TG.swipeToelement(value[1], driver, value[3], bot);
 						} catch (Exception e) {
 							resultMessage = e.getMessage();
 							caseExecResult = "failure";
 						}
-						excel.writeResult(value[4], resultMessage,
-								executeDevicename);// 写入单个测试用例单个步骤的执行结果
+						excel.writeResult(value[4], resultMessage, executeDevicename);// 写入单个测试用例单个步骤的执行结果
 						break;
 					case "滑动查找元素_id":// 可以翻页查找元素,可以进行不同方向的滑动，包括上下左右
 
 						try {
-							WebDriverWait wait = new WebDriverWait(driver,
-									maxWaitTime);// 最多等待时间由maxWaitTime指定
-							TG.swipeToelementAllD(value[1], driver, value[3],
-									bot, value[5]);
+							WebDriverWait wait = new WebDriverWait(driver, maxWaitTime);// 最多等待时间由maxWaitTime指定
+							TG.swipeToelementAllD(value[1], driver, value[3], bot, value[5]);
 						} catch (Exception e) {
 							resultMessage = e.getMessage();
 							caseExecResult = "failure";
 						}
-						excel.writeResult(value[4], resultMessage,
-								executeDevicename);// 写入单个测试用例单个步骤的执行结果
+						excel.writeResult(value[4], resultMessage, executeDevicename);// 写入单个测试用例单个步骤的执行结果
 						break;
 					case "滑动目录并点击_id":// 向上滑动到某元素的位置，并点击该元素
 						try {
@@ -201,17 +163,14 @@ public class singleCaseProcess {
 								tmpReadedText = "第" + TD.getTestData(value[3]); // 要点击的内容为，包含"第"+章节号的文本内容
 							}
 
-							WebDriverWait wait = new WebDriverWait(driver,
-									maxWaitTime);// 最多等待时间由maxWaitTime指定
-							TG.swipeAndClick(value[1], driver, tmpReadedText,
-									direction);
+							WebDriverWait wait = new WebDriverWait(driver, maxWaitTime);// 最多等待时间由maxWaitTime指定
+							TG.swipeAndClick(value[1], driver, tmpReadedText, direction);
 							resultMessage = TG.getReturnMessage();
 						} catch (Exception e) {
 							resultMessage = e.getMessage();
 							caseExecResult = "failure";
 						}
-						excel.writeResult(value[4], resultMessage,
-								executeDevicename);// 写入单个测试用例单个步骤的执行结果
+						excel.writeResult(value[4], resultMessage, executeDevicename);// 写入单个测试用例单个步骤的执行结果
 						break;
 					case "滑动到底部":
 						try {
@@ -223,8 +182,7 @@ public class singleCaseProcess {
 							do {
 								tmpCount = tmpCount + 1;
 								str1 = driver.getPageSource(); // 滑动前获取pagesource
-								driver.swipe(width / 2, height * 9 / 10,
-										width / 2, height / 10, 2000);
+								driver.swipe(width / 2, height * 9 / 10, width / 2, height / 10, 2000);
 								Thread.sleep(2000);
 								str2 = driver.getPageSource();// 滑动后获取pagesource
 							} while (!(str1.equals(str2)) && tmpCount <= 10); // 最大滑动10次
@@ -232,52 +190,43 @@ public class singleCaseProcess {
 							resultMessage = e.getMessage();
 							caseExecResult = "failure";
 						}
-						excel.writeResult(value[4], resultMessage,
-								executeDevicename);// 写入单个测试用例单个步骤的执行结果
+						excel.writeResult(value[4], resultMessage, executeDevicename);// 写入单个测试用例单个步骤的执行结果
 						break;
 					case "轻触屏幕中央":
 						try {
-							WebDriverWait wait = new WebDriverWait(driver,
-									maxWaitTime);// 最多等待时间由maxWaitTime指定
+							WebDriverWait wait = new WebDriverWait(driver, maxWaitTime);// 最多等待时间由maxWaitTime指定
 							TG.getReadSet(driver, appType, value[3]);
 							resultMessage = TG.getReturnMessage();
 						} catch (Exception e) {
 							resultMessage = e.getMessage();
 							caseExecResult = "failure";
 						}
-						excel.writeResult(value[4], resultMessage,
-								executeDevicename);// 写入单个测试用例单个步骤的执行结果
+						excel.writeResult(value[4], resultMessage, executeDevicename);// 写入单个测试用例单个步骤的执行结果
 						break;
 
 					case "点击_AccessibilityId":
 						try {
-							WebDriverWait wait = new WebDriverWait(driver,
-									maxWaitTime);// 最多等待时间由maxWaitTime指定
-							driver.findElementByAccessibilityId(value[1])
-									.click();
+							WebDriverWait wait = new WebDriverWait(driver, maxWaitTime);// 最多等待时间由maxWaitTime指定
+							driver.findElementByAccessibilityId(value[1]).click();
 						} catch (Exception e) {
 							resultMessage = e.getMessage();
 							caseExecResult = "failure";
 						}
-						excel.writeResult(value[4], resultMessage,
-								executeDevicename);// 写入单个测试用例单个步骤的执行结果
+						excel.writeResult(value[4], resultMessage, executeDevicename);// 写入单个测试用例单个步骤的执行结果
 						break;
 
 					case "点击_id":
 						try {
-							WebDriverWait wait = new WebDriverWait(driver,
-									maxWaitTime);// 最多等待时间由maxWaitTime指定
+							WebDriverWait wait = new WebDriverWait(driver, maxWaitTime);// 最多等待时间由maxWaitTime指定
 
 							if (value[2].equals("")) {
-								if (ExpectedConditions
-										.elementToBeClickable(By.id(value[1]))!=null) {
+								if (ExpectedConditions.elementToBeClickable(By.id(value[1])) != null) {
 									driver.findElement(By.id(value[1])).click();
 								}
-								
+
 							} else {
-								wait.until(ExpectedConditions.elementToBeClickable(driver
-										.findElements(By.id(value[1])).get(
-												Integer.parseInt(value[2]))));
+								wait.until(ExpectedConditions.elementToBeClickable(
+										driver.findElements(By.id(value[1])).get(Integer.parseInt(value[2]))));
 								bot = driver.findElements(By.id(value[1]));
 								bot.get(Integer.parseInt(value[2])).click();
 							}
@@ -288,28 +237,20 @@ public class singleCaseProcess {
 							// investorLogin.invesTag="fail";
 							caseExecResult = "failure";
 						}
-						excel.writeResult(value[4], resultMessage,
-								executeDevicename);
+						excel.writeResult(value[4], resultMessage, executeDevicename);
 						break;
 
 					case "点击_xpath":
-						System.out.println("values[1]" + value[1]
-								+ "-----value[2]" + value[2]);
 						try {
-							WebDriverWait wait = new WebDriverWait(driver,
-									maxWaitTime);// 最多等待时间由maxWaitTime指定
+							WebDriverWait wait = new WebDriverWait(driver, maxWaitTime);// 最多等待时间由maxWaitTime指定
 							if (value[2].equals("")) {
-								if (wait.until(ExpectedConditions
-										.elementToBeClickable(By
-												.xpath(value[1]))) != null) {
+								if (wait.until(ExpectedConditions.elementToBeClickable(By.xpath(value[1]))) != null) {
 
-									driver.findElement(By.xpath(value[1]))
-											.click();
+									driver.findElement(By.xpath(value[1])).click();
 								}
 							} else {
-								wait.until(ExpectedConditions.elementToBeClickable(driver
-										.findElements(By.xpath(value[1])).get(
-												Integer.parseInt(value[2]))));
+								wait.until(ExpectedConditions.elementToBeClickable(
+										driver.findElements(By.xpath(value[1])).get(Integer.parseInt(value[2]))));
 								bot = driver.findElements(By.xpath(value[1]));
 								bot.get(Integer.parseInt(value[2])).click();
 							}
@@ -317,49 +258,38 @@ public class singleCaseProcess {
 							resultMessage = e.getMessage();
 							caseExecResult = "failure";
 						}
-						excel.writeResult(value[4], resultMessage,
-								executeDevicename);
+						excel.writeResult(value[4], resultMessage, executeDevicename);
 						break;
 
 					case "点击_className":
 						try {
-							WebDriverWait wait = new WebDriverWait(driver,
-									maxWaitTime);// 最多等待时间由maxWaitTime指定
+							WebDriverWait wait = new WebDriverWait(driver, maxWaitTime);// 最多等待时间由maxWaitTime指定
 
 							if (value[2].equals("")) {
-								wait.until(ExpectedConditions
-										.elementToBeClickable(By
-												.className(value[1])));
-								driver.findElement(By.className(value[1]))
-										.click();
+								wait.until(ExpectedConditions.elementToBeClickable(By.className(value[1])));
+								driver.findElement(By.className(value[1])).click();
 							} else {
-								wait.until(ExpectedConditions.elementToBeClickable(driver
-										.findElements(By.className(value[1]))
-										.get(Integer.parseInt(value[2]))));
-								bot = driver.findElements(By
-										.className(value[1]));
+								wait.until(ExpectedConditions.elementToBeClickable(
+										driver.findElements(By.className(value[1])).get(Integer.parseInt(value[2]))));
+								bot = driver.findElements(By.className(value[1]));
 								bot.get(Integer.parseInt(value[2])).click();
 							}
 						} catch (Exception e) {
 							resultMessage = e.getMessage();
 							caseExecResult = "failure";
 						}
-						excel.writeResult(value[4], resultMessage,
-								executeDevicename);
+						excel.writeResult(value[4], resultMessage, executeDevicename);
 						break;
 
 					case "点击_name":
 						try {
-							WebDriverWait wait = new WebDriverWait(driver,
-									maxWaitTime);// 最多等待时间由maxWaitTime指定
+							WebDriverWait wait = new WebDriverWait(driver, maxWaitTime);// 最多等待时间由maxWaitTime指定
 							if (value[2].equals("")) {
-								wait.until(ExpectedConditions
-										.elementToBeClickable(By.name(value[1])));
+								wait.until(ExpectedConditions.elementToBeClickable(By.name(value[1])));
 								driver.findElement(By.name(value[1])).click();
 							} else {
-								wait.until(ExpectedConditions.elementToBeClickable(driver
-										.findElements(By.name(value[1])).get(
-												Integer.parseInt(value[2]))));
+								wait.until(ExpectedConditions.elementToBeClickable(
+										driver.findElements(By.name(value[1])).get(Integer.parseInt(value[2]))));
 								bot = driver.findElements(By.name(value[1]));
 								bot.get(Integer.parseInt(value[2])).click();
 							}
@@ -367,48 +297,38 @@ public class singleCaseProcess {
 							resultMessage = e.getMessage();
 							caseExecResult = "failure";
 						}
-						excel.writeResult(value[4], resultMessage,
-								executeDevicename);
+						excel.writeResult(value[4], resultMessage, executeDevicename);
 						break;
 					case "点击_文本":
 						try {
 							String tmpReadedText;
-							WebDriverWait wait = new WebDriverWait(driver,
-									maxWaitTime);// 最多等待时间由maxWaitTime指定
+							WebDriverWait wait = new WebDriverWait(driver, maxWaitTime);// 最多等待时间由maxWaitTime指定
 							if (value[1].equals("")) {
 								tmpReadedText = value[3]; // 如果未传入取值类型，需要在value[3]中直接传入要检查的文本，否则，从测试数据文件中读取要检查的文本，作为期望值。
 							} else {
 								tmpReadedText = TD.getTestData(value[1]);
 							}
 
-							wait.until(ExpectedConditions
-									.elementToBeClickable(By
-											.name(tmpReadedText)));
+							wait.until(ExpectedConditions.elementToBeClickable(By.name(tmpReadedText)));
 							driver.findElement(By.name(tmpReadedText)).click();
 						} catch (Exception e) {
 							resultMessage = e.getMessage();
 							caseExecResult = "failure";
 						}
-						excel.writeResult(value[4], resultMessage,
-								executeDevicename);
+						excel.writeResult(value[4], resultMessage, executeDevicename);
 						break;
 					case "长按_id":
 						try {
-							WebDriverWait wait = new WebDriverWait(driver,
-									maxWaitTime);// 最多等待时间由maxWaitTime指定
+							WebDriverWait wait = new WebDriverWait(driver, maxWaitTime);// 最多等待时间由maxWaitTime指定
 							if (value[2].equals("")) {
-								wait.until(ExpectedConditions
-										.elementToBeClickable(By.id(value[1])));
-								WebElement test = driver.findElement(By
-										.id(value[1]));
+								wait.until(ExpectedConditions.elementToBeClickable(By.id(value[1])));
+								WebElement test = driver.findElement(By.id(value[1]));
 								driver.tap(1, test, 5000);
 							} else {
-								wait.until(ExpectedConditions.elementToBeClickable(driver
-										.findElements(By.id(value[1])).get(
-												Integer.parseInt(value[2]))));
+								wait.until(ExpectedConditions.elementToBeClickable(
+										driver.findElements(By.id(value[1])).get(Integer.parseInt(value[2]))));
 								bot = driver.findElements(By.id(value[1]));
-								WebElement test = bot.get(Integer
-										.parseInt(value[2]));
+								WebElement test = bot.get(Integer.parseInt(value[2]));
 								driver.tap(1, test, 5000);
 
 							}
@@ -419,27 +339,21 @@ public class singleCaseProcess {
 							// investorLogin.invesTag="fail";
 							caseExecResult = "failure";
 						}
-						excel.writeResult(value[4], resultMessage,
-								executeDevicename);
+						excel.writeResult(value[4], resultMessage, executeDevicename);
 						break;
 					case "长按_name":
 						try {
 
-							WebDriverWait wait = new WebDriverWait(driver,
-									maxWaitTime);// 最多等待时间由maxWaitTime指定
+							WebDriverWait wait = new WebDriverWait(driver, maxWaitTime);// 最多等待时间由maxWaitTime指定
 							if (value[2].equals("")) {
-								wait.until(ExpectedConditions
-										.elementToBeClickable(By.name(value[1])));
-								WebElement test = driver.findElement(By
-										.name(value[1]));
+								wait.until(ExpectedConditions.elementToBeClickable(By.name(value[1])));
+								WebElement test = driver.findElement(By.name(value[1]));
 								driver.tap(1, test, 5000);
 							} else {
-								wait.until(ExpectedConditions.elementToBeClickable(driver
-										.findElements(By.name(value[1])).get(
-												Integer.parseInt(value[2]))));
+								wait.until(ExpectedConditions.elementToBeClickable(
+										driver.findElements(By.name(value[1])).get(Integer.parseInt(value[2]))));
 								bot = driver.findElements(By.name(value[1]));
-								WebElement test = bot.get(Integer
-										.parseInt(value[2]));
+								WebElement test = bot.get(Integer.parseInt(value[2]));
 								driver.tap(1, test, 5000);
 							}
 
@@ -448,27 +362,20 @@ public class singleCaseProcess {
 							resultMessage = e.getMessage();
 							caseExecResult = "failure";
 						}
-						excel.writeResult(value[4], resultMessage,
-								executeDevicename);
+						excel.writeResult(value[4], resultMessage, executeDevicename);
 						break;
 					case "长按_xpath":
 						try {
-							WebDriverWait wait = new WebDriverWait(driver,
-									maxWaitTime);// 最多等待时间由maxWaitTime指定
+							WebDriverWait wait = new WebDriverWait(driver, maxWaitTime);// 最多等待时间由maxWaitTime指定
 							if (value[2].equals("")) {
-								wait.until(ExpectedConditions
-										.elementToBeClickable(By
-												.xpath(value[1])));
-								WebElement longPress = driver.findElement(By
-										.xpath(value[1]));
+								wait.until(ExpectedConditions.elementToBeClickable(By.xpath(value[1])));
+								WebElement longPress = driver.findElement(By.xpath(value[1]));
 								driver.tap(1, longPress, 5000);
 							} else {
-								wait.until(ExpectedConditions.elementToBeClickable(driver
-										.findElements(By.xpath(value[1])).get(
-												Integer.parseInt(value[2]))));
+								wait.until(ExpectedConditions.elementToBeClickable(
+										driver.findElements(By.xpath(value[1])).get(Integer.parseInt(value[2]))));
 								bot = driver.findElements(By.xpath(value[1]));
-								WebElement test = bot.get(Integer
-										.parseInt(value[2]));
+								WebElement test = bot.get(Integer.parseInt(value[2]));
 								driver.tap(1, test, 5000);
 
 							}
@@ -479,88 +386,68 @@ public class singleCaseProcess {
 							// investorLogin.invesTag="fail";
 							caseExecResult = "failure";
 						}
-						excel.writeResult(value[4], resultMessage,
-								executeDevicename);
+						excel.writeResult(value[4], resultMessage, executeDevicename);
 						break;
 
 					case "输入_xpath":
 						try {
-							WebDriverWait wait = new WebDriverWait(driver,
-									maxWaitTime);// 最多等待时间由maxWaitTime指定
-							wait.until(ExpectedConditions
-									.presenceOfElementLocated(By
-											.xpath(value[1])));
+							WebDriverWait wait = new WebDriverWait(driver, maxWaitTime);// 最多等待时间由maxWaitTime指定
+							wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(value[1])));
 							if (value[2].equals("")) {
-								driver.findElement(By.xpath(value[1]))
-										.sendKeys(value[3]);
+								driver.findElement(By.xpath(value[1])).sendKeys(value[3]);
 							} else {
 								bot = driver.findElements(By.xpath(value[1]));
-								bot.get(Integer.parseInt(value[2])).sendKeys(
-										value[3]);
+								bot.get(Integer.parseInt(value[2])).sendKeys(value[3]);
 							}
 						} catch (Exception e) {
 							resultMessage = e.getMessage();
 							caseExecResult = "failure";
 						}
-						excel.writeResult(value[4], resultMessage,
-								executeDevicename);
+						excel.writeResult(value[4], resultMessage, executeDevicename);
 						break;
 
 					case "输入_id":
 						try {
-							WebDriverWait wait = new WebDriverWait(driver,
-									maxWaitTime);// 最多等待时间由maxWaitTime指定
-							wait.until(ExpectedConditions
-									.presenceOfElementLocated(By.id(value[1])));
+							WebDriverWait wait = new WebDriverWait(driver, maxWaitTime);// 最多等待时间由maxWaitTime指定
+							wait.until(ExpectedConditions.presenceOfElementLocated(By.id(value[1])));
 							if (value[2].equals("")) {
-								driver.findElement(By.id(value[1])).sendKeys(
-										value[3]);
+								driver.findElement(By.id(value[1])).sendKeys(value[3]);
 							} else {
 								bot = driver.findElements(By.id(value[1]));
-								bot.get(Integer.parseInt(value[2])).sendKeys(
-										value[3]);
+								bot.get(Integer.parseInt(value[2])).sendKeys(value[3]);
 							}
 
 						} catch (Exception e) {
 							resultMessage = e.getMessage();
 							caseExecResult = "failure";
 						}
-						excel.writeResult(value[4], resultMessage,
-								executeDevicename);
+						excel.writeResult(value[4], resultMessage, executeDevicename);
 						break;
 
 					case "输入_classname":
 						try {
-							WebDriverWait wait = new WebDriverWait(driver,
-									maxWaitTime);// 最多等待时间由maxWaitTime指定
-							wait.until(ExpectedConditions
-									.presenceOfElementLocated(By.name(value[1])));
-							driver.findElement(By.name(value[1])).sendKeys(
-									value[3]);
+							WebDriverWait wait = new WebDriverWait(driver, maxWaitTime);// 最多等待时间由maxWaitTime指定
+							wait.until(ExpectedConditions.presenceOfElementLocated(By.name(value[1])));
+							driver.findElement(By.name(value[1])).sendKeys(value[3]);
 						} catch (Exception e) {
 							resultMessage = e.getMessage();
 							caseExecResult = "failure";
 						}
-						excel.writeResult(value[4], resultMessage,
-								executeDevicename);
+						excel.writeResult(value[4], resultMessage, executeDevicename);
 						break;
 					case "输入_文本":
 						try {
 
 							String tmpReadedText;
-							WebDriverWait wait = new WebDriverWait(driver,
-									maxWaitTime);// 最多等待时间由maxWaitTime指定
-							wait.until(ExpectedConditions
-									.presenceOfElementLocated(By.id(value[1])));
+							WebDriverWait wait = new WebDriverWait(driver, maxWaitTime);// 最多等待时间由maxWaitTime指定
+							wait.until(ExpectedConditions.presenceOfElementLocated(By.id(value[1])));
 							tmpReadedText = TD.getTestData(value[3]);// 从测试数据文件中读取要检查的文本，作为期望值。
-							driver.findElement(By.id(value[1])).sendKeys(
-									tmpReadedText);
+							driver.findElement(By.id(value[1])).sendKeys(tmpReadedText);
 						} catch (Exception e) {
 							resultMessage = e.getMessage();
 							caseExecResult = "failure";
 						}
-						excel.writeResult(value[4], resultMessage,
-								executeDevicename);
+						excel.writeResult(value[4], resultMessage, executeDevicename);
 						break;
 
 					case "回退":
@@ -571,8 +458,7 @@ public class singleCaseProcess {
 							resultMessage = e.getMessage();
 							caseExecResult = "failure";
 						}
-						excel.writeResult(value[4], resultMessage,
-								executeDevicename);
+						excel.writeResult(value[4], resultMessage, executeDevicename);
 						break;
 					case "隐藏键盘":
 						try {
@@ -582,23 +468,17 @@ public class singleCaseProcess {
 							resultMessage = e.getMessage();
 							caseExecResult = "failure";
 						}
-						excel.writeResult(value[4], resultMessage,
-								executeDevicename);
+						excel.writeResult(value[4], resultMessage, executeDevicename);
 						break;
 					case "读取信息_id":
 						try {
-							WebDriverWait wait = new WebDriverWait(driver,
-									maxWaitTime);// 最多等待时间由maxWaitTime指定
-							wait.until(ExpectedConditions
-									.presenceOfElementLocated(By.id(value[1])));
+							WebDriverWait wait = new WebDriverWait(driver, maxWaitTime);// 最多等待时间由maxWaitTime指定
+							wait.until(ExpectedConditions.presenceOfElementLocated(By.id(value[1])));
 							if (value[2].equals("")) {
-								readedText = driver
-										.findElement(By.id(value[1])).getText(); // 要获取的页面元素的文本内容
+								readedText = driver.findElement(By.id(value[1])).getText(); // 要获取的页面元素的文本内容
 							} else {
 								bot = driver.findElements(By.id(value[1]));
-								readedText = bot
-										.get(Integer.parseInt(value[2]))
-										.getText();
+								readedText = bot.get(Integer.parseInt(value[2])).getText();
 							}
 
 							testDataType = value[3]; // 要获取的文本内容的类型，value[3]中的值应该与“测试相关数据.xlsx"文档中的标题行的信息相匹配;
@@ -607,25 +487,17 @@ public class singleCaseProcess {
 							resultMessage = e.getMessage();
 							caseExecResult = "failure";
 						}
-						excel.writeResult(value[4], resultMessage,
-								executeDevicename);
+						excel.writeResult(value[4], resultMessage, executeDevicename);
 						break;
 					case "读取信息_xpath":
 						try {
-							WebDriverWait wait = new WebDriverWait(driver,
-									maxWaitTime);// 最多等待时间由maxWaitTime指定
-							wait.until(ExpectedConditions
-									.presenceOfElementLocated(By
-											.xpath(value[1])));
+							WebDriverWait wait = new WebDriverWait(driver, maxWaitTime);// 最多等待时间由maxWaitTime指定
+							wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(value[1])));
 							if (value[2].equals("")) {
-								readedText = driver.findElement(
-										By.xpath(value[1]))
-										.getAttribute("name"); // 要获取的页面元素的content-desc里的内容
+								readedText = driver.findElement(By.xpath(value[1])).getAttribute("name"); // 要获取的页面元素的content-desc里的内容
 							} else {
 								bot = driver.findElements(By.xpath(value[1]));
-								readedText = bot
-										.get(Integer.parseInt(value[2]))
-										.getAttribute("name");
+								readedText = bot.get(Integer.parseInt(value[2])).getAttribute("name");
 							}
 
 							testDataType = value[3]; // 要获取的文本内容的类型，value[3]中的值应该与“测试相关数据.xlsx"文档中的标题行的信息相匹配;
@@ -634,74 +506,54 @@ public class singleCaseProcess {
 							resultMessage = e.getMessage();
 							caseExecResult = "failure";
 						}
-						excel.writeResult(value[4], resultMessage,
-								executeDevicename);
+						excel.writeResult(value[4], resultMessage, executeDevicename);
 						break;
 					case "读取局部信息_id":
 						try {
-							WebDriverWait wait = new WebDriverWait(driver,
-									maxWaitTime);// 最多等待时间由maxWaitTime指定
-							wait.until(ExpectedConditions
-									.presenceOfElementLocated(By.id(value[1])));
+							WebDriverWait wait = new WebDriverWait(driver, maxWaitTime);// 最多等待时间由maxWaitTime指定
+							wait.until(ExpectedConditions.presenceOfElementLocated(By.id(value[1])));
 							if (value[2].equals("")) {
-								readedText = driver
-										.findElement(By.id(value[1])).getText(); // 要获取的页面元素的文本内容
+								readedText = driver.findElement(By.id(value[1])).getText(); // 要获取的页面元素的文本内容
 							} else {
 								bot = driver.findElements(By.id(value[1]));
-								readedText = bot
-										.get(Integer.parseInt(value[2]))
-										.getText();
+								readedText = bot.get(Integer.parseInt(value[2])).getText();
 							}
 
 							testDataType = value[3]; // 要获取的文本内容的类型，value[3]中的值应该与“测试相关数据.xlsx"文档中的标题行的信息相匹配;
-							String filteredText = warpingFunctions
-									.getFiltedText(readedText, value[5]);
+							String filteredText = warpingFunctions.getFiltedText(readedText, value[5]);
 							TD.setTestData(testDataType, filteredText);
 						} catch (Exception e) {
 							resultMessage = e.getMessage();
 							caseExecResult = "failure";
 						}
-						excel.writeResult(value[4], resultMessage,
-								executeDevicename);
+						excel.writeResult(value[4], resultMessage, executeDevicename);
 						break;
 					case "读取局部信息_xpath":
 						try {
-							WebDriverWait wait = new WebDriverWait(driver,
-									maxWaitTime);// 最多等待时间由maxWaitTime指定
-							wait.until(ExpectedConditions
-									.presenceOfElementLocated(By
-											.xpath(value[1])));
+							WebDriverWait wait = new WebDriverWait(driver, maxWaitTime);// 最多等待时间由maxWaitTime指定
+							wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(value[1])));
 							if (value[2].equals("")) {
-								readedText = driver.findElement(
-										By.xpath(value[1]))
-										.getAttribute("name"); // 要获取的页面元素的content-desc里的内容
+								readedText = driver.findElement(By.xpath(value[1])).getAttribute("name"); // 要获取的页面元素的content-desc里的内容
 							} else {
 								bot = driver.findElements(By.xpath(value[1]));
-								readedText = bot
-										.get(Integer.parseInt(value[2]))
-										.getAttribute("name"); // 要获取的页面元素的content-desc里的内容
+								readedText = bot.get(Integer.parseInt(value[2])).getAttribute("name"); // 要获取的页面元素的content-desc里的内容
 							}
 
 							testDataType = value[3]; // 要获取的文本内容的类型，value[3]中的值应该与“测试相关数据.xlsx"文档中的标题行的信息相匹配;
-							String filteredText = warpingFunctions
-									.getFiltedText(readedText, value[5]);
+							String filteredText = warpingFunctions.getFiltedText(readedText, value[5]);
 							TD.setTestData(testDataType, filteredText);
 						} catch (Exception e) {
 							resultMessage = e.getMessage();
 							caseExecResult = "failure";
 						}
-						excel.writeResult(value[4], resultMessage,
-								executeDevicename);
+						excel.writeResult(value[4], resultMessage, executeDevicename);
 						break;
 
 					case "漫画岛设置目录顺序_id":
 						try {
-							WebDriverWait wait = new WebDriverWait(driver,
-									maxWaitTime);// 最多等待时间由maxWaitTime指定
-							wait.until(ExpectedConditions
-									.presenceOfElementLocated(By.id(value[1])));
-							readedText = driver.findElement(By.id(value[1]))
-									.getText(); // 要获取的页面元素的文本内容
+							WebDriverWait wait = new WebDriverWait(driver, maxWaitTime);// 最多等待时间由maxWaitTime指定
+							wait.until(ExpectedConditions.presenceOfElementLocated(By.id(value[1])));
+							readedText = driver.findElement(By.id(value[1])).getText(); // 要获取的页面元素的文本内容
 							if (!(readedText.equals(value[3].trim()))) // 如果当前的目录顺序与传入的期望值不一致，点击“顺序/倒序”按钮
 							{
 								driver.findElement(By.id(value[1])).click();
@@ -710,17 +562,13 @@ public class singleCaseProcess {
 							resultMessage = e.getMessage();
 							caseExecResult = "failure";
 						}
-						excel.writeResult(value[4], resultMessage,
-								executeDevicename);
+						excel.writeResult(value[4], resultMessage, executeDevicename);
 						break;
 					case "状态设置_id":
 						try {
-							WebDriverWait wait = new WebDriverWait(driver,
-									maxWaitTime);// 最多等待时间由maxWaitTime指定
-							wait.until(ExpectedConditions
-									.presenceOfElementLocated(By.id(value[1])));
-							readedText = driver.findElement(By.id(value[1]))
-									.getText(); // 要获取的页面元素的文本内容
+							WebDriverWait wait = new WebDriverWait(driver, maxWaitTime);// 最多等待时间由maxWaitTime指定
+							wait.until(ExpectedConditions.presenceOfElementLocated(By.id(value[1])));
+							readedText = driver.findElement(By.id(value[1])).getText(); // 要获取的页面元素的文本内容
 							if (!(readedText.equals(value[3].trim()))) // 如果传入id对应元素的当前值与传入的期望值不一致，点击id对应按钮
 							{
 								driver.findElement(By.id(value[1])).click();
@@ -729,43 +577,32 @@ public class singleCaseProcess {
 							resultMessage = e.getMessage();
 							caseExecResult = "failure";
 						}
-						excel.writeResult(value[4], resultMessage,
-								executeDevicename);
+						excel.writeResult(value[4], resultMessage, executeDevicename);
 						break;
 					case "转发回复点赞":
 						try {
 							int currentNumber;
 							if (value[3].equals("点赞数")) {
-								currentNumber = Integer.parseInt(TD
-										.getTestData("点赞数")) + 1;
-								TD.setTestData("点赞数",
-										Integer.toString(currentNumber));
+								currentNumber = Integer.parseInt(TD.getTestData("点赞数")) + 1;
+								TD.setTestData("点赞数", Integer.toString(currentNumber));
 							} else if (value[3].equals("回复数")) {
-								currentNumber = Integer.parseInt(TD
-										.getTestData("回复数")) + 1;
-								TD.setTestData("回复数",
-										Integer.toString(currentNumber));
+								currentNumber = Integer.parseInt(TD.getTestData("回复数")) + 1;
+								TD.setTestData("回复数", Integer.toString(currentNumber));
 							} else if (value[3].equals("转发数")) {
-								currentNumber = Integer.parseInt(TD
-										.getTestData("转发数")) + 1;
-								TD.setTestData("转发数",
-										Integer.toString(currentNumber));
+								currentNumber = Integer.parseInt(TD.getTestData("转发数")) + 1;
+								TD.setTestData("转发数", Integer.toString(currentNumber));
 							}
 						} catch (Exception e) {
 							resultMessage = e.getMessage();
 							caseExecResult = "failure";
 						}
-						excel.writeResult(value[4], resultMessage,
-								executeDevicename);
+						excel.writeResult(value[4], resultMessage, executeDevicename);
 						break;
 					case "漫画岛设置收藏已收藏_id":
 						try {
-							WebDriverWait wait = new WebDriverWait(driver,
-									maxWaitTime);// 最多等待时间由maxWaitTime指定
-							wait.until(ExpectedConditions
-									.presenceOfElementLocated(By.id(value[1])));
-							readedText = driver.findElement(By.id(value[1]))
-									.getText(); // 要获取的页面元素的文本内容
+							WebDriverWait wait = new WebDriverWait(driver, maxWaitTime);// 最多等待时间由maxWaitTime指定
+							wait.until(ExpectedConditions.presenceOfElementLocated(By.id(value[1])));
+							readedText = driver.findElement(By.id(value[1])).getText(); // 要获取的页面元素的文本内容
 							if (!(readedText.equals(value[3].trim()))) // 如果当前的目录顺序与传入的期望值不一致，点击“顺序/倒序”按钮
 							{
 								driver.findElement(By.id(value[1])).click();
@@ -774,8 +611,7 @@ public class singleCaseProcess {
 							resultMessage = e.getMessage();
 							caseExecResult = "failure";
 						}
-						excel.writeResult(value[4], resultMessage,
-								executeDevicename);
+						excel.writeResult(value[4], resultMessage, executeDevicename);
 						break;
 					case "带上书架操作退出阅读器_文本":
 						try {
@@ -788,8 +624,7 @@ public class singleCaseProcess {
 							resultMessage = e.getMessage();
 							caseExecResult = "failure";
 						}
-						excel.writeResult(value[4], resultMessage,
-								executeDevicename);
+						excel.writeResult(value[4], resultMessage, executeDevicename);
 						break;
 					case "分享之前登录_文本":
 						try {
@@ -802,21 +637,15 @@ public class singleCaseProcess {
 							resultMessage = e.getMessage();
 							caseExecResult = "failure";
 						}
-						excel.writeResult(value[4], resultMessage,
-								executeDevicename);
+						excel.writeResult(value[4], resultMessage, executeDevicename);
 						break;
 					case "检查点_xpath":
 						try {
-							WebDriverWait wait = new WebDriverWait(driver,
-									maxWaitTime);// 最多等待时间由maxWaitTime指定
-							wait.until(ExpectedConditions
-									.presenceOfElementLocated(By
-											.xpath(value[1])));
-							actualValue = driver
-									.findElement(By.xpath(value[1])).getText();
+							WebDriverWait wait = new WebDriverWait(driver, maxWaitTime);// 最多等待时间由maxWaitTime指定
+							wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(value[1])));
+							actualValue = driver.findElement(By.xpath(value[1])).getText();
 							expectedValue = value[5];
-							checkResult = warpingFunctions.verifyTest(
-									actualValue, expectedValue);
+							checkResult = warpingFunctions.verifyTest(actualValue, expectedValue);
 							if (checkResult == "fail") {
 								FileUtil.takeTakesScreenshot(driver);
 								resultMessage = FileUtil.filePath;
@@ -827,29 +656,23 @@ public class singleCaseProcess {
 							checkResult = "failure";
 							caseExecResult = "failure";
 						}
-						excel.writeCheckResult(value[4], resultMessage,
-								checkResult, actualValue, expectedValue,
+						excel.writeCheckResult(value[4], resultMessage, checkResult, actualValue, expectedValue,
 								executeDevicename);
 						break;
 
 					case "检查点_id":
 						try {
-							WebDriverWait wait = new WebDriverWait(driver,
-									maxWaitTime);// 最多等待时间由maxWaitTime指定
-							wait.until(ExpectedConditions
-									.presenceOfElementLocated(By.id(value[1])));
+							WebDriverWait wait = new WebDriverWait(driver, maxWaitTime);// 最多等待时间由maxWaitTime指定
+							wait.until(ExpectedConditions.presenceOfElementLocated(By.id(value[1])));
 							if (value[2].equals("")) {
-								actualValue = driver.findElement(
-										By.id(value[1])).getText();
+								actualValue = driver.findElement(By.id(value[1])).getText();
 							} else {
 								bot = driver.findElements(By.id(value[1]));
-								actualValue = bot.get(
-										Integer.parseInt(value[2])).getText();
+								actualValue = bot.get(Integer.parseInt(value[2])).getText();
 							}
 
 							expectedValue = value[5];
-							checkResult = warpingFunctions.verifyTest(
-									actualValue, expectedValue);
+							checkResult = warpingFunctions.verifyTest(actualValue, expectedValue);
 							if (checkResult == "fail") {
 								FileUtil.takeTakesScreenshot(driver);
 								resultMessage = FileUtil.filePath;
@@ -860,8 +683,7 @@ public class singleCaseProcess {
 							checkResult = "failure";
 							caseExecResult = "failure";
 						}
-						excel.writeCheckResult(value[4], resultMessage,
-								checkResult, actualValue, expectedValue,
+						excel.writeCheckResult(value[4], resultMessage, checkResult, actualValue, expectedValue,
 								executeDevicename);
 						break;
 					case "检查点_文本存在":
@@ -879,8 +701,7 @@ public class singleCaseProcess {
 							actualValue = checkedText;
 							expectedValue = checkedText; // 默认情况下，假定校验成功，在期望结果与实际结果一样
 
-							checkResult = warpingFunctions.verifyContainTest(
-									pageSourceString, checkedText, "y");
+							checkResult = warpingFunctions.verifyContainTest(pageSourceString, checkedText, "y");
 							if (checkResult == "fail") {
 								FileUtil.takeTakesScreenshot(driver);
 								resultMessage = FileUtil.filePath;
@@ -893,8 +714,7 @@ public class singleCaseProcess {
 							caseExecResult = "failure";
 							actualValue = "";
 						}
-						excel.writeCheckResult(value[4], resultMessage,
-								checkResult, actualValue, expectedValue,
+						excel.writeCheckResult(value[4], resultMessage, checkResult, actualValue, expectedValue,
 								executeDevicename);
 						break;
 					case "检查点_文本不存在":
@@ -911,8 +731,7 @@ public class singleCaseProcess {
 							actualValue = "";
 							expectedValue = ""; // 默认情况下，假定校验成功，在期望结果与实际结果一样
 
-							checkResult = warpingFunctions.verifyContainTest(
-									pageSourceString, checkedText, "n");
+							checkResult = warpingFunctions.verifyContainTest(pageSourceString, checkedText, "n");
 							if (checkResult == "fail") {
 								FileUtil.takeTakesScreenshot(driver);
 								resultMessage = FileUtil.filePath;
@@ -925,23 +744,19 @@ public class singleCaseProcess {
 							caseExecResult = "failure";
 							actualValue = "";
 						}
-						excel.writeCheckResult(value[4], resultMessage,
-								checkResult, actualValue, expectedValue,
+						excel.writeCheckResult(value[4], resultMessage, checkResult, actualValue, expectedValue,
 								executeDevicename);
 						break;
 					case "检查点_id_字段包含":
 						try {
 							String bigText, smallText;
 							Thread.sleep(2000);
-							WebDriverWait wait = new WebDriverWait(driver,
-									maxWaitTime);// 最多等待时间由maxWaitTime指定
+							WebDriverWait wait = new WebDriverWait(driver, maxWaitTime);// 最多等待时间由maxWaitTime指定
 							if (value[2].equals("")) {
-								bigText = driver.findElement(By.id(value[1]))
-										.getText();
+								bigText = driver.findElement(By.id(value[1])).getText();
 							} else {
 								bot = driver.findElements(By.id(value[1]));
-								bigText = bot.get(Integer.parseInt(value[2]))
-										.getText();
+								bigText = bot.get(Integer.parseInt(value[2])).getText();
 							}
 							if (value[3].equals("")) // value[3]中可以指定从数据文件读取的内容；如果value[3]为空，则要验证被包含的字段，直接从value[5]读取
 							{
@@ -953,8 +768,7 @@ public class singleCaseProcess {
 							actualValue = smallText;
 							expectedValue = smallText; // 默认情况下，假定校验成功，在期望结果与实际结果一样
 
-							checkResult = warpingFunctions.verifyContainTest(
-									bigText, smallText, "y");
+							checkResult = warpingFunctions.verifyContainTest(bigText, smallText, "y");
 							if (checkResult == "fail") {
 								FileUtil.takeTakesScreenshot(driver);
 								resultMessage = FileUtil.filePath;
@@ -967,25 +781,20 @@ public class singleCaseProcess {
 							caseExecResult = "failure";
 							actualValue = "";
 						}
-						excel.writeCheckResult(value[4], resultMessage,
-								checkResult, actualValue, expectedValue,
+						excel.writeCheckResult(value[4], resultMessage, checkResult, actualValue, expectedValue,
 								executeDevicename);
 						break;
 					case "检查点_xpath_字段包含":
 						try {
 							String bigText, smallText;
 							Thread.sleep(2000);
-							WebDriverWait wait = new WebDriverWait(driver,
-									maxWaitTime);// 最多等待时间由maxWaitTime指定
+							WebDriverWait wait = new WebDriverWait(driver, maxWaitTime);// 最多等待时间由maxWaitTime指定
 							if (value[2].equals("")) {
-								bigText = driver
-										.findElement(By.xpath(value[1]))
-										.getAttribute("name"); // 获取content
-																// desc里的信息
+								bigText = driver.findElement(By.xpath(value[1])).getAttribute("name"); // 获取content
+																										// desc里的信息
 							} else {
 								bot = driver.findElements(By.xpath(value[1]));
-								bigText = bot.get(Integer.parseInt(value[2]))
-										.getAttribute("name");
+								bigText = bot.get(Integer.parseInt(value[2])).getAttribute("name");
 							}
 							if (value[3].equals("")) // value[3]中可以指定从数据文件读取的内容；如果value[3]为空，则要验证被包含的字段，直接从value[5]读取
 							{
@@ -997,8 +806,7 @@ public class singleCaseProcess {
 							actualValue = smallText;
 							expectedValue = smallText; // 默认情况下，假定校验成功，在期望结果与实际结果一样
 
-							checkResult = warpingFunctions.verifyContainTest(
-									bigText, smallText, "y");
+							checkResult = warpingFunctions.verifyContainTest(bigText, smallText, "y");
 							if (checkResult == "fail") {
 								FileUtil.takeTakesScreenshot(driver);
 								resultMessage = FileUtil.filePath;
@@ -1011,8 +819,7 @@ public class singleCaseProcess {
 							caseExecResult = "failure";
 							actualValue = "";
 						}
-						excel.writeCheckResult(value[4], resultMessage,
-								checkResult, actualValue, expectedValue,
+						excel.writeCheckResult(value[4], resultMessage, checkResult, actualValue, expectedValue,
 								executeDevicename);
 						break;
 
@@ -1020,15 +827,12 @@ public class singleCaseProcess {
 						try {
 							String bigText, smallText;
 							Thread.sleep(2000);
-							WebDriverWait wait = new WebDriverWait(driver,
-									maxWaitTime);// 最多等待时间由maxWaitTime指定
+							WebDriverWait wait = new WebDriverWait(driver, maxWaitTime);// 最多等待时间由maxWaitTime指定
 							if (value[2].equals("")) {
-								bigText = driver.findElement(By.id(value[1]))
-										.getText();
+								bigText = driver.findElement(By.id(value[1])).getText();
 							} else {
 								bot = driver.findElements(By.id(value[1]));
-								bigText = bot.get(Integer.parseInt(value[2]))
-										.getText();
+								bigText = bot.get(Integer.parseInt(value[2])).getText();
 							}
 
 							if (value[3].equals("")) // value[3]中可以指定从数据文件读取的内容；如果value[3]为空，则要验证被包含的字段，直接从value[5]读取
@@ -1040,8 +844,7 @@ public class singleCaseProcess {
 							actualValue = "";
 							expectedValue = ""; // 默认情况下，假定校验成功，在期望结果与实际结果一样
 
-							checkResult = warpingFunctions.verifyContainTest(
-									bigText, smallText, "n");
+							checkResult = warpingFunctions.verifyContainTest(bigText, smallText, "n");
 							if (checkResult == "fail") {
 								FileUtil.takeTakesScreenshot(driver);
 								resultMessage = FileUtil.filePath;
@@ -1054,25 +857,20 @@ public class singleCaseProcess {
 							caseExecResult = "failure";
 							actualValue = "";
 						}
-						excel.writeCheckResult(value[4], resultMessage,
-								checkResult, actualValue, expectedValue,
+						excel.writeCheckResult(value[4], resultMessage, checkResult, actualValue, expectedValue,
 								executeDevicename);
 						break;
 					case "检查点_xpath_字段不包含":
 						try {
 							String bigText, smallText;
 							Thread.sleep(2000);
-							WebDriverWait wait = new WebDriverWait(driver,
-									maxWaitTime);// 最多等待时间由maxWaitTime指定
+							WebDriverWait wait = new WebDriverWait(driver, maxWaitTime);// 最多等待时间由maxWaitTime指定
 							if (value[2].equals("")) {
-								bigText = driver
-										.findElement(By.xpath(value[1]))
-										.getAttribute("name"); // 获取content
-																// desc里的信息
+								bigText = driver.findElement(By.xpath(value[1])).getAttribute("name"); // 获取content
+																										// desc里的信息
 							} else {
 								bot = driver.findElements(By.xpath(value[1]));
-								bigText = bot.get(Integer.parseInt(value[2]))
-										.getAttribute("name");
+								bigText = bot.get(Integer.parseInt(value[2])).getAttribute("name");
 							}
 							if (value[3].equals("")) // value[3]中可以指定从数据文件读取的内容；如果value[3]为空，则要验证被包含的字段，直接从value[5]读取
 							{
@@ -1084,8 +882,7 @@ public class singleCaseProcess {
 							actualValue = "";
 							expectedValue = ""; // 默认情况下，假定校验成功，在期望结果与实际结果一样
 
-							checkResult = warpingFunctions.verifyContainTest(
-									bigText, smallText, "n");
+							checkResult = warpingFunctions.verifyContainTest(bigText, smallText, "n");
 							if (checkResult == "fail") {
 								FileUtil.takeTakesScreenshot(driver);
 								resultMessage = FileUtil.filePath;
@@ -1097,14 +894,12 @@ public class singleCaseProcess {
 							checkResult = "failure";
 							caseExecResult = "failure";
 						}
-						excel.writeCheckResult(value[4], resultMessage,
-								checkResult, actualValue, expectedValue,
+						excel.writeCheckResult(value[4], resultMessage, checkResult, actualValue, expectedValue,
 								executeDevicename);
 						break;
 					case "检查点_id_内容为空":
 						try {
-							WebDriverWait wait = new WebDriverWait(driver,
-									maxWaitTime);
+							WebDriverWait wait = new WebDriverWait(driver, maxWaitTime);
 							WebElement wen;
 							if (value[2].equals("")) {
 								wen = driver.findElement(By.id(value[1]));
@@ -1122,31 +917,26 @@ public class singleCaseProcess {
 							checkResult = "fail";
 							caseExecResult = "failure";
 						}
-						excel.writeCheckResult(value[4], resultMessage,
-								checkResult, actualValue, expectedValue,
+						excel.writeCheckResult(value[4], resultMessage, checkResult, actualValue, expectedValue,
 								executeDevicename);
 						break;
 					case "检查点_id_数值":
 						try {
 							String bigText, smallText;
 							Thread.sleep(2000);
-							WebDriverWait wait = new WebDriverWait(driver,
-									maxWaitTime);// 最多等待时间由maxWaitTime指定
+							WebDriverWait wait = new WebDriverWait(driver, maxWaitTime);// 最多等待时间由maxWaitTime指定
 							if (value[2].equals("")) {
-								bigText = driver.findElement(By.id(value[1]))
-										.getText();
+								bigText = driver.findElement(By.id(value[1])).getText();
 							} else {
 								bot = driver.findElements(By.id(value[1]));
-								bigText = bot.get(Integer.parseInt(value[2]))
-										.getText();
+								bigText = bot.get(Integer.parseInt(value[2])).getText();
 							}
 
 							smallText = TD.computAndGetData(value[3]);
 							actualValue = smallText;
 							expectedValue = smallText; // 默认情况下，假定校验成功，在期望结果与实际结果一样
 
-							checkResult = warpingFunctions.verifyContainTest(
-									bigText, smallText, "y");
+							checkResult = warpingFunctions.verifyContainTest(bigText, smallText, "y");
 							if (checkResult == "fail") {
 								FileUtil.takeTakesScreenshot(driver);
 								resultMessage = FileUtil.filePath;
@@ -1159,26 +949,21 @@ public class singleCaseProcess {
 							caseExecResult = "failure";
 							actualValue = "";
 						}
-						excel.writeCheckResult(value[4], resultMessage,
-								checkResult, actualValue, expectedValue,
+						excel.writeCheckResult(value[4], resultMessage, checkResult, actualValue, expectedValue,
 								executeDevicename);
 						break;
 					case "检查点_id_比较":
 						try {
 							int comment1, comment2, totalString;
 							Thread.sleep(2000);
-							WebDriverWait wait = new WebDriverWait(driver,
-									maxWaitTime);// 最多等待时间由maxWaitTime指定
-							comment1 = Integer.parseInt(TD
-									.getTestData(value[1]));// 获取评论数前的值
-							comment2 = Integer.parseInt(TD
-									.getTestData(value[3]));// 获取评论数后的值
+							WebDriverWait wait = new WebDriverWait(driver, maxWaitTime);// 最多等待时间由maxWaitTime指定
+							comment1 = Integer.parseInt(TD.getTestData(value[1]));// 获取评论数前的值
+							comment2 = Integer.parseInt(TD.getTestData(value[3]));// 获取评论数后的值
 							totalString = comment1 + 1;
 
 							int actualValue = totalString;
 							int expectedValue = totalString; // 默认情况下，假定校验成功，在期望结果与实际结果一样
-							checkResult = warpingFunctions.comment(comment2,
-									totalString);
+							checkResult = warpingFunctions.comment(comment2, totalString);
 							if (checkResult == "fail") {
 								FileUtil.takeTakesScreenshot(driver);
 								resultMessage = FileUtil.filePath;
@@ -1192,8 +977,7 @@ public class singleCaseProcess {
 							caseExecResult = "failure";
 							actualValue = "";
 						}
-						excel.writeCheckResult(value[4], resultMessage,
-								checkResult, actualValue, expectedValue,
+						excel.writeCheckResult(value[4], resultMessage, checkResult, actualValue, expectedValue,
 								executeDevicename);
 						break;
 					case "检查点_id_漫画岛蛋券余额":
@@ -1201,18 +985,14 @@ public class singleCaseProcess {
 							String bigText, smallText;
 							boolean ifDisplayed;
 							Thread.sleep(2000);
-							WebDriverWait wait = new WebDriverWait(driver,
-									maxWaitTime);// 最多等待时间由maxWaitTime指定
-							bigText = driver.findElement(By.id(value[1]))
-									.getText();
+							WebDriverWait wait = new WebDriverWait(driver, maxWaitTime);// 最多等待时间由maxWaitTime指定
+							bigText = driver.findElement(By.id(value[1])).getText();
 							smallText = TD.getTestData(value[3]);
 							ifDisplayed = TD.getIfDispMHD(value[3]); // 漫画岛的漫画券与岛蛋余额在购买页面不一定显示，需要先判断是否需要显示
 							if (ifDisplayed == true) {
 								actualValue = smallText;
 								expectedValue = smallText; // 默认情况下，假定校验成功，在期望结果与实际结果一样
-								checkResult = warpingFunctions
-										.verifyContainTest(bigText, smallText,
-												"y");
+								checkResult = warpingFunctions.verifyContainTest(bigText, smallText, "y");
 								if (checkResult == "fail") {
 									FileUtil.takeTakesScreenshot(driver);
 									resultMessage = FileUtil.filePath;
@@ -1231,8 +1011,7 @@ public class singleCaseProcess {
 							caseExecResult = "failure";
 							actualValue = "";
 						}
-						excel.writeCheckResult(value[4], resultMessage,
-								checkResult, actualValue, expectedValue,
+						excel.writeCheckResult(value[4], resultMessage, checkResult, actualValue, expectedValue,
 								executeDevicename);
 						break;
 
@@ -1240,25 +1019,20 @@ public class singleCaseProcess {
 						try {
 							String bigText, smallText;
 							Thread.sleep(2000);
-							WebDriverWait wait = new WebDriverWait(driver,
-									maxWaitTime);// 最多等待时间由maxWaitTime指定
+							WebDriverWait wait = new WebDriverWait(driver, maxWaitTime);// 最多等待时间由maxWaitTime指定
 							if (value[2].equals("")) {
-								bigText = driver
-										.findElement(By.xpath(value[1]))
-										.getAttribute("name"); // 获取content
-																// desc里的值
+								bigText = driver.findElement(By.xpath(value[1])).getAttribute("name"); // 获取content
+																										// desc里的值
 							} else {
 								bot = driver.findElements(By.xpath(value[1]));
-								bigText = bot.get(Integer.parseInt(value[2]))
-										.getAttribute("name");
+								bigText = bot.get(Integer.parseInt(value[2])).getAttribute("name");
 							}
 
 							smallText = TD.computAndGetData(value[3]);
 							actualValue = smallText;
 							expectedValue = smallText; // 默认情况下，假定校验成功，在期望结果与实际结果一样
 
-							checkResult = warpingFunctions.verifyContainTest(
-									bigText, smallText, "y");
+							checkResult = warpingFunctions.verifyContainTest(bigText, smallText, "y");
 							if (checkResult == "fail") {
 								FileUtil.takeTakesScreenshot(driver);
 								resultMessage = FileUtil.filePath;
@@ -1271,8 +1045,7 @@ public class singleCaseProcess {
 							caseExecResult = "failure";
 							actualValue = "";
 						}
-						excel.writeCheckResult(value[4], resultMessage,
-								checkResult, actualValue, expectedValue,
+						excel.writeCheckResult(value[4], resultMessage, checkResult, actualValue, expectedValue,
 								executeDevicename);
 						break;
 					case "等待下载完成":
@@ -1283,9 +1056,7 @@ public class singleCaseProcess {
 							checkResult = "fail";
 							while (waitItem < 24 && checkResult == "fail") {
 								Thread.sleep(5000);
-								checkResult = warpingFunctions
-										.verifyContainTest(pageSourceString,
-												value[3], "y");
+								checkResult = warpingFunctions.verifyContainTest(pageSourceString, value[3], "y");
 								waitItem = waitItem + 1;
 								pageSourceString = driver.getPageSource(); // 再次获取页面pagesource
 							}
@@ -1298,15 +1069,13 @@ public class singleCaseProcess {
 							resultMessage = e.getMessage();
 							caseExecResult = "failure";
 						}
-						excel.writeResult(value[4], resultMessage,
-								executeDevicename);
+						excel.writeResult(value[4], resultMessage, executeDevicename);
 						break;
 					case "完成章节购买":
 						try {
 							if (appType.equals("ZS") || appType.equals("zs")) {
 								resultMessage = TD.buyAccoutingZS();
-							} else if (appType.equals("KJ")
-									|| appType.equals("kj")) {
+							} else if (appType.equals("KJ") || appType.equals("kj")) {
 								resultMessage = TD.buyAccoutingKJ();
 							} else if (appType.equalsIgnoreCase("MHD")) {
 								resultMessage = TD.buyAccoutingMHD();
@@ -1319,22 +1088,16 @@ public class singleCaseProcess {
 							caseExecResult = "failure";
 						}
 
-						excel.writeResult(value[4], resultMessage,
-								executeDevicename);
+						excel.writeResult(value[4], resultMessage, executeDevicename);
 						break;
 
 					case "检查点_class":
 						try {
-							WebDriverWait wait = new WebDriverWait(driver,
-									maxWaitTime);// 最多等待时间由maxWaitTime指定
-							wait.until(ExpectedConditions
-									.presenceOfElementLocated(By
-											.className(value[1])));
-							actualValue = driver.findElement(
-									By.className(value[1])).getText();
+							WebDriverWait wait = new WebDriverWait(driver, maxWaitTime);// 最多等待时间由maxWaitTime指定
+							wait.until(ExpectedConditions.presenceOfElementLocated(By.className(value[1])));
+							actualValue = driver.findElement(By.className(value[1])).getText();
 							expectedValue = value[5];
-							checkResult = warpingFunctions.verifyTest(
-									actualValue, expectedValue);
+							checkResult = warpingFunctions.verifyTest(actualValue, expectedValue);
 							if (checkResult == "fail") {
 								FileUtil.takeTakesScreenshot(driver);
 								resultMessage = FileUtil.filePath;
@@ -1345,8 +1108,7 @@ public class singleCaseProcess {
 							checkResult = "failure";
 							caseExecResult = "failure";
 						}
-						excel.writeCheckResult(value[4], resultMessage,
-								checkResult, actualValue, expectedValue,
+						excel.writeCheckResult(value[4], resultMessage, checkResult, actualValue, expectedValue,
 								executeDevicename);
 						break;
 					case "对比_文本":
@@ -1364,8 +1126,7 @@ public class singleCaseProcess {
 							resultMessage = e.getMessage();
 							caseExecResult = "failure";
 						}
-						excel.writeResult(value[4], resultMessage,
-								executeDevicename);// 写入单个测试用例单个步骤的执行结果
+						excel.writeResult(value[4], resultMessage, executeDevicename);// 写入单个测试用例单个步骤的执行结果
 						break;
 					case "等待时间":
 						try {
@@ -1374,17 +1135,14 @@ public class singleCaseProcess {
 							resultMessage = e.getMessage();
 							caseExecResult = "failure";
 						}
-						excel.writeResult(value[4], resultMessage,
-								executeDevicename);
+						excel.writeResult(value[4], resultMessage, executeDevicename);
 						break;
 					}
 
 					if (resultMessage.length() == 0) {
-						System.out.print("设备" + executeDevicename + ": 用例编号"
-								+ (i + 1) + "成功跑通" + "\r");
+						System.out.print("设备" + executeDevicename + ": 用例编号" + (i + 1) + "成功跑通" + "\r");
 					} else {
-						System.out.print("设备" + executeDevicename + ": 用例编号"
-								+ (i + 1) + "跑失败" + "\r");
+						System.out.print("设备" + executeDevicename + ": 用例编号" + (i + 1) + "跑失败" + "\r");
 						caseExecResult = "fail";
 					}
 				}
@@ -1410,24 +1168,19 @@ public class singleCaseProcess {
 		return caseExecResult;
 	}
 
-	public void writeHeaderSingleCase(String caseName, String executeDevicename)
-			throws IOException {
+	public void writeHeaderSingleCase(String caseName, String executeDevicename) throws IOException {
 		test1.testmethod();
 		String result2 = test1.str2;
-		String excelPath = result2 + executeDevicename + "-"
-				+ String.valueOf(dateUtil.getYear(excel.date)) + "-"
-				+ String.valueOf(dateUtil.getMonth(excel.date)) + "-"
-				+ String.valueOf(dateUtil.getDay(excel.date)) + "-"
-				+ String.valueOf(dateUtil.getHour(excel.date)) + "-"
-				+ String.valueOf(dateUtil.getMinute(excel.date)) + caseName
-				+ ".xlsx";
+		String excelPath = result2 + executeDevicename + "-" + String.valueOf(dateUtil.getYear(excel.date)) + "-"
+				+ String.valueOf(dateUtil.getMonth(excel.date)) + "-" + String.valueOf(dateUtil.getDay(excel.date))
+				+ "-" + String.valueOf(dateUtil.getHour(excel.date)) + "-"
+				+ String.valueOf(dateUtil.getMinute(excel.date)) + caseName + ".xlsx";
 		Workbook workbook = new XSSFWorkbook();
 		Sheet sheet = workbook.createSheet("testdata1");
 		FileOutputStream outputStream = new FileOutputStream(excelPath);
 		try {
 			Row row0 = sheet.createRow(0);
-			String[] headers = new String[] { "编号", "检查点", "实际结果", "预期结果",
-					"检查结果", "错误描述" };
+			String[] headers = new String[] { "编号", "检查点", "实际结果", "预期结果", "检查结果", "错误描述" };
 			for (int i = 0; i < headers.length; i++) {
 				Cell cell_1 = row0.createCell(i, Cell.CELL_TYPE_STRING);
 				CellStyle style = excel.getStyle(workbook);

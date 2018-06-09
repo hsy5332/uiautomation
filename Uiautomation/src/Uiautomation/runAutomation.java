@@ -30,7 +30,7 @@ class RunnableDemo implements Runnable {
 	private String linuxApkPath;
 
 	RunnableDemo(String name, String deviceName, String udid, int port, String appPackage, String appActivity,
-			String platformName, String platformVersion, String appPaths, String excutesystem, String linuxip,
+			String platformName, String platformVersion, String appPaths, String excutesystem, String connectip,
 			String linuxapkpath) {
 		threadName = name;
 		executeDevicename = deviceName;
@@ -42,10 +42,11 @@ class RunnableDemo implements Runnable {
 		platformNames = platformName;
 		platformVersions = platformVersion;
 		excuteSystem = excutesystem;
-		connectIp = linuxip;
+		connectIp = connectip;
 		linuxApkPath = linuxapkpath;
 		// appium 需要的参数进行重新赋值
-		System.out.print("设备：" + executeDevicename + ",设备UDID：" + executeUdid + ",设备端口号：" + executePort + "\r\n");
+		System.out.print("设备：" + executeDevicename + ",设备UDID：" + executeUdid + ",设备端口号：" + executePort + ",ip地址是:"
+				+ connectIp + "\r\n");
 	}
 
 	public void run() {
@@ -138,7 +139,8 @@ class RunnableDemo implements Runnable {
 			closeConnect.closeDevicesCmd(executePort, executeUdid, executeDevicename, uninstallcmd);
 
 		} catch (Exception e) {
-			System.out.println("连接设备出错，请检查端口号和连接的设备udid,应该连接的设备是：" + executeUdid + "，端口号：" + executePort);
+			System.out.println(
+					"连接设备出错，请检查端口号和连接的设备udid,应该连接的设备是：" + executeUdid + ",端口号：" + executePort + ",ip地址是:" + connectIp);
 			closeConnect.closeDevicesCmd(executePort, executeUdid, executeDevicename, uninstallcmd);
 
 		}
@@ -163,15 +165,24 @@ class runAutomation {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		String appPackage = test1.appPackage;
+		String appActivity = test1.str11;
+		String platformName = "Android";
+		String platformVersion = test1.str9;
+		String appPaths = test.str10;
+		String excutesystem = test1.excutesystem;
+		String[] connectip = test1.connectip.split(",");
+		String[] devicescount = test1.devicescount.split(",");
+		String linuxapkpath = test1.linuxapkpath;
+		// 读取Test.properties 配置信息
 
 		Object[] deviceUdid = GetDevices.getUdid();
-
 		if (deviceUdid == null || deviceUdid.length < 1) {
 			System.out.println("无设备连接");
 			return;
 		}
+		// 获取设备ID
 		Object[] connectPort = (Object[]) AppiumServerManager.startAppiumServer(deviceUdid.length).toArray();
-		// 判断设备数是否大于端口数 deviceUdid.length 设备数
 		if (deviceUdid.length > connectPort.length) {
 			Object[] realdeviceUdid = new Object[connectPort.length];
 			for (int deviceUdidcount = 0; deviceUdidcount < connectPort.length; deviceUdidcount++) {
@@ -187,38 +198,30 @@ class runAutomation {
 			connectPort = realconnectPort;
 
 		}
-		String appPackage = test1.appPackage;
-		String appActivity = test1.str11;
-		String platformName = "Android";
-		String platformVersion = test1.str9;
-		String appPaths = test.str10;
-		String excutesystem = test1.excutesystem;
-		String linuxip = test1.linuxip;
-		String linuxapkpath = test1.linuxapkpath;
-		// 读取Test.properties 配置信息
+		// 判断设备数是否大于端口数 deviceUdid.length 设备数
 
-		if (deviceUdid.length == 1) {
-			RunnableDemo oneDeviceUdid = new RunnableDemo(String.valueOf(deviceUdid[0]), String.valueOf(deviceUdid[0]),
-					String.valueOf(deviceUdid[0]), (int) connectPort[0], appPackage, appActivity, platformName,
-					platformVersion, appPaths, excutesystem, linuxip, linuxapkpath);
-			oneDeviceUdid.start();
-			// 一个设备或只有一个端口时，创建一个线程进行运行
+		if (deviceUdid.length <= 1 && connectip.length > 1) {
+			System.out.print("请检查配置文件中设备数和IP是否正确,IP数如果大于1,设备数则必须大于1。");
 		} else {
-			RunnableDemo executedevices[] = new RunnableDemo[deviceUdid.length];
-			int i = 0;
-			while (i < deviceUdid.length) {
-				executedevices[i] = new RunnableDemo(String.valueOf(deviceUdid[i]), String.valueOf(deviceUdid[i]),
-						String.valueOf(deviceUdid[i]), (int) connectPort[i], appPackage, appActivity, platformName,
-						platformVersion, appPaths, excutesystem, linuxip, linuxapkpath);
-				executedevices[i].start();
-				try {
-					TimeUnit.SECONDS.sleep(5);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
+			int lastLength = 0;
+			for (int i = 0; i < connectip.length; i++) {
+				int total = lastLength + Integer.parseInt(devicescount[i]);
+				for (int j = lastLength; j < lastLength + Integer.parseInt(devicescount[i]); j++) {
+					RunnableDemo executedevices[] = new RunnableDemo[deviceUdid.length];
+					executedevices[j] = new RunnableDemo(String.valueOf(deviceUdid[j]), String.valueOf(deviceUdid[j]),
+							String.valueOf(deviceUdid[j]), (int) connectPort[j], appPackage, appActivity, platformName,
+							platformVersion, appPaths, excutesystem, connectip[i], linuxapkpath);
+					executedevices[j].start();
+					try {
+						TimeUnit.SECONDS.sleep(5);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
 				}
-				i = i + 1;
+				lastLength = total;
 			}
-			// 多设备或只有多端口时，创建多线程进行运行
 		}
+		// 多设备或只有多端口时，创建多线程进行运行
+
 	}
 }
