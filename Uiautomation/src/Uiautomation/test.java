@@ -21,7 +21,6 @@ public class test {
 	public static String str12;
 	public static String port;
 	public static String appPackage;
-	public static String excutesystem;
 	public static String connectip;
 	public static String linuxapkpath;
 	public static String devicescount;
@@ -74,9 +73,6 @@ public class test {
 			}
 			if (strKey.equals("appPackage")) {
 				appPackage = strValue;
-			}
-			if (strKey.equals("excutesystem")) {
-				excutesystem = strValue;
 			}
 			if (strKey.equals("connectip")) {
 				connectip = strValue;

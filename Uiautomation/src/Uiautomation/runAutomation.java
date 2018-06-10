@@ -30,8 +30,7 @@ class RunnableDemo implements Runnable {
 	private String linuxApkPath;
 
 	RunnableDemo(String name, String deviceName, String udid, int port, String appPackage, String appActivity,
-			String platformName, String platformVersion, String appPaths, String excutesystem, String connectip,
-			String linuxapkpath) {
+			String platformName, String platformVersion, String appPaths, String connectip, String linuxapkpath) {
 		threadName = name;
 		executeDevicename = deviceName;
 		executeUdid = udid;
@@ -41,7 +40,6 @@ class RunnableDemo implements Runnable {
 		appActivitys = appActivity;
 		platformNames = platformName;
 		platformVersions = platformVersion;
-		excuteSystem = excutesystem;
 		connectIp = connectip;
 		linuxApkPath = linuxapkpath;
 		// appium 需要的参数进行重新赋值
@@ -170,7 +168,6 @@ class runAutomation {
 		String platformName = "Android";
 		String platformVersion = test1.str9;
 		String appPaths = test.str10;
-		String excutesystem = test1.excutesystem;
 		String[] connectip = test1.connectip.split(",");
 		String[] devicescount = test1.devicescount.split(",");
 		String linuxapkpath = test1.linuxapkpath;
@@ -181,7 +178,12 @@ class runAutomation {
 			System.out.println("无设备连接");
 			return;
 		}
+		for (int devcount = 0; devcount < deviceUdid.length; devcount++) {
+			System.out.print("黄顺耀：");
+			System.out.print(deviceUdid[devcount] + "\r\n");
+		}
 		// 获取设备ID
+
 		Object[] connectPort = (Object[]) AppiumServerManager.startAppiumServer(deviceUdid.length).toArray();
 		if (deviceUdid.length > connectPort.length) {
 			Object[] realdeviceUdid = new Object[connectPort.length];
@@ -198,7 +200,7 @@ class runAutomation {
 			connectPort = realconnectPort;
 
 		}
-		// 判断设备数是否大于端口数 deviceUdid.length 设备数
+		// 获取连接的端口好,判断设备数是否大于端口数 deviceUdid.length 设备数
 
 		if (deviceUdid.length <= 1 && connectip.length > 1) {
 			System.out.print("请检查配置文件中设备数和IP是否正确,IP数如果大于1,设备数则必须大于1。");
@@ -210,7 +212,7 @@ class runAutomation {
 					RunnableDemo executedevices[] = new RunnableDemo[deviceUdid.length];
 					executedevices[j] = new RunnableDemo(String.valueOf(deviceUdid[j]), String.valueOf(deviceUdid[j]),
 							String.valueOf(deviceUdid[j]), (int) connectPort[j], appPackage, appActivity, platformName,
-							platformVersion, appPaths, excutesystem, connectip[i], linuxapkpath);
+							platformVersion, appPaths, connectip[i], linuxapkpath);
 					executedevices[j].start();
 					try {
 						TimeUnit.SECONDS.sleep(5);

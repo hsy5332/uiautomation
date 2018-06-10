@@ -1,6 +1,8 @@
 package Uiautomation;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -14,36 +16,60 @@ public class AppiumServerManager {
 	 */
 
 	public static List<Integer> startAppiumServer(int count) {
-		int[] ports = radomPort(count);
+		List<String> deviceslist = new ArrayList<String>();
+		Runtime runtime = Runtime.getRuntime();
+		try {
+			BufferedReader cmdadbdevices = new BufferedReader(
+					new InputStreamReader(runtime.exec("adb devices").getInputStream()));
+			String line = null;
+
+			while ((line = cmdadbdevices.readLine()) != null) {
+				if (line.indexOf(String.valueOf("device")) != -1) {
+					line = line.toString().split("device")[0].replaceAll(" ", "").replaceAll("	", "");
+					deviceslist.add(line);
+				}
+			}
+			deviceslist.remove(0);
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+		int[] ports = radomPort(deviceslist.size());
 		Properties prop = System.getProperties();
 		List<Integer> successPorts = new ArrayList<Integer>();
 		test test1 = new test();
-		String excutesystem = test1.excutesystem;
-		if (excutesystem.indexOf("linux") != -1) {
-			String[] devicesports = test1.port.split(",");
+		String connectip = test1.connectip;
+		String[] devicesports = test1.port.split(",");
+		if (connectip.indexOf("127.0.0.1") != -1 && connectip.indexOf("192.168") != -1) {
+			for (int i = 0; i < ports.length; i++) {
+				int p = excuteCmd(ports[i]);
+				if (p != 0) {
+					successPorts.add(p);
+				}
+			}
 			for (int devicesportlen = 0; devicesportlen < devicesports.length; devicesportlen++) {
 				successPorts.add(Integer.parseInt(devicesports[devicesportlen]));
 			}
-			return successPorts;
-		} else {
-			if (ports != null) {
-				for (int i = 0; i < ports.length; i++) {
-					int p = excuteCmd(ports[i]);
-					if (p != 0) {
-						successPorts.add(p);
+		} else if (connectip.indexOf("127.0.0.1") != -1 && connectip.indexOf("192.168") == -1) {
+			if (prop.getProperty("os.name") != null && prop.getProperty("os.name").indexOf("Mac") > -1) {
+				for (int devicesportlen = 0; devicesportlen < devicesports.length; devicesportlen++) {
+					successPorts.add(Integer.parseInt(devicesports[devicesportlen]));
+				}
+			} else {
+				if (ports != null) {
+					for (int i = 0; i < ports.length; i++) {
+						int p = excuteCmd(ports[i]);
+						if (p != 0) {
+							successPorts.add(p);
+						}
 					}
 				}
 			}
-			if (prop.getProperty("os.name") != null && prop.getProperty("os.name").indexOf("Mac") > -1) {
-				String[] devicesport = test1.port.split(",");
-				for (int i = 0; i < devicesport.length; i++) {
-					successPorts.add(Integer.parseInt(devicesport[i]));
-				}
-				return successPorts;
-			} else {
-				return successPorts;
+		} else {
+			for (int devicesportlen = 0; devicesportlen < devicesports.length; devicesportlen++) {
+				successPorts.add(Integer.parseInt(devicesports[devicesportlen]));
 			}
 		}
+		return successPorts;
 	}
 
 	/**

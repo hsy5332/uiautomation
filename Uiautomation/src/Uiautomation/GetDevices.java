@@ -15,13 +15,28 @@ public class GetDevices {
 		Properties prop = System.getProperties();
 		String adbdevicecmd = "adb devices";
 		test test1 = new test();
-		String excutesystem = test1.excutesystem;
-		if (excutesystem.indexOf("linux") != -1) {
-			String[] devicesids = test1.str8.split(",");
+		String[] devicesids = test1.str8.split(",");
+		String connectip = test1.connectip;
+		String[] connectips = test1.connectip.split(",");
+		if (connectip.indexOf("127.0.0.1") != -1 && connectip.indexOf("192.168") != -1) {
+			try {
+				BufferedReader cmdadbdevices = new BufferedReader(
+						new InputStreamReader(runtime.exec(adbdevicecmd).getInputStream()));
+				String line = null;
+				while ((line = cmdadbdevices.readLine()) != null) {
+					if (line.indexOf(String.valueOf("device")) != -1) {
+						line = line.toString().split("device")[0].replaceAll(" ", "").replaceAll("	", "");
+						deviceslist.add(line);
+					}
+				}
+				deviceslist.remove(0);
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
 			for (int deviceslen = 0; deviceslen < devicesids.length; deviceslen++) {
 				deviceslist.add(devicesids[deviceslen]);
 			}
-		} else {
+		} else if (connectip.indexOf("127.0.0.1") != -1 && connectip.indexOf("192.168") == -1) {
 			if (prop.getProperty("os.name") != null && prop.getProperty("os.name").indexOf("Mac") > -1) {
 				try {
 					BufferedReader cmdadbdevices = new BufferedReader(new InputStreamReader(
@@ -53,11 +68,14 @@ public class GetDevices {
 							deviceslist.add(line);
 						}
 					}
-
 					deviceslist.remove(0);
 				} catch (IOException e1) {
 					e1.printStackTrace();
 				}
+			}
+		} else {
+			for (int deviceslen = 0; deviceslen < devicesids.length; deviceslen++) {
+				deviceslist.add(devicesids[deviceslen]);
 			}
 		}
 
