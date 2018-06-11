@@ -8,6 +8,7 @@ public class closeDevicesConnect {
 	public void closeDevicesCmd(int executePort, String executeUdid, String executeDevicename, String uninstallcmd) {
 		try {
 			
+			
 			Properties prop = System.getProperties();
 			if (prop.getProperty("os.name") != null && prop.getProperty("os.name").indexOf("Mac") > -1) { // 判断是否为Mac系统
 				String executecmd = "lsof -i -P";
