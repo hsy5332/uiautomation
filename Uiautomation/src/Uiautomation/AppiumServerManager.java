@@ -18,23 +18,43 @@ public class AppiumServerManager {
 	public static List<Integer> startAppiumServer(int count) {
 		List<String> deviceslist = new ArrayList<String>();
 		Runtime runtime = Runtime.getRuntime();
-		try {
-			BufferedReader cmdadbdevices = new BufferedReader(
-					new InputStreamReader(runtime.exec("adb devices").getInputStream()));
-			String line = null;
-
-			while ((line = cmdadbdevices.readLine()) != null) {
-				if (line.indexOf(String.valueOf("device")) != -1) {
-					line = line.toString().split("device")[0].replaceAll(" ", "").replaceAll("	", "");
-					deviceslist.add(line);
-				}
-			}
-			deviceslist.remove(0);
-		} catch (IOException e1) {
-			e1.printStackTrace();
-		}
-		int[] ports = radomPort(deviceslist.size());
 		Properties prop = System.getProperties();
+		if (prop.getProperty("os.name") != null && prop.getProperty("os.name").indexOf("Mac") > -1) {
+			try {
+				BufferedReader cmdadbdevices = new BufferedReader(new InputStreamReader(
+						runtime.exec("/volumes/software/work/eclipse/android/sdk/platform-tools/adb devices")
+								.getInputStream()));
+				String line = null;
+				while ((line = cmdadbdevices.readLine()) != null) {
+					if (line.indexOf(String.valueOf("device")) != -1) {
+						line = line.toString().split("device")[0].replaceAll(" ", "").replaceAll("	", "");
+						deviceslist.add(line);
+					}
+				}
+				deviceslist.remove(0);
+
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
+		}else{
+			try {
+				BufferedReader cmdadbdevices = new BufferedReader(
+						new InputStreamReader(runtime.exec("adb devices").getInputStream()));
+				String line = null;
+
+				while ((line = cmdadbdevices.readLine()) != null) {
+					if (line.indexOf(String.valueOf("device")) != -1) {
+						line = line.toString().split("device")[0].replaceAll(" ", "").replaceAll("	", "");
+						deviceslist.add(line);
+					}
+				}
+				deviceslist.remove(0);
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
+		}
+
+		int[] ports = radomPort(deviceslist.size());
 		List<Integer> successPorts = new ArrayList<Integer>();
 		test test1 = new test();
 		String connectip = test1.connectip;
@@ -86,8 +106,7 @@ public class AppiumServerManager {
 			defPort = 0;
 		} else {
 			try {
-				runtime.exec("cmd.exe /c start cmd.exe /k \"appium -a 127.0.0.1 -p " + port
-						+ " -bp "+bootstrap+" --session-override -dc \"{\"\"noReset\"\": \"\"true\"\"}\"\"");
+				runtime.exec("cmd.exe /c start cmd.exe /k \"appium -a 127.0.0.1 -p " + port + " -bp "+bootstrap+" --session-override -dc \"{\"\"noReset\"\": \"\"true\"\"}\"\"");
 				Thread.sleep(2000);
 				defPort = port;
 			} catch (IOException | InterruptedException e) {
