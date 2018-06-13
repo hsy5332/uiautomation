@@ -81,12 +81,13 @@ public class AppiumServerManager {
 		Runtime runtime = Runtime.getRuntime();
 		Properties prop = System.getProperties();
 		int defPort = 0;
+		int bootstrap =port-10;
 		if (prop.getProperty("os.name") != null && prop.getProperty("os.name").indexOf("Mac") > -1) {
 			defPort = 0;
 		} else {
 			try {
 				runtime.exec("cmd.exe /c start cmd.exe /k \"appium -a 127.0.0.1 -p " + port
-						+ " --session-override -dc \"{\"\"noReset\"\": \"\"true\"\"}\"\"");
+						+ " -bp "+bootstrap+" --session-override -dc \"{\"\"noReset\"\": \"\"true\"\"}\"\"");
 				Thread.sleep(2000);
 				defPort = port;
 			} catch (IOException | InterruptedException e) {
