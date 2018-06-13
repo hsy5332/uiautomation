@@ -231,7 +231,6 @@ public class singleCaseProcess {
 						try {
 							WebDriverWait wait = new WebDriverWait(driver, maxWaitTime);// 最多等待时间由maxWaitTime指定
 
-							System.out.println("value[1]"+value[1]+executeDevicename+"用例编号"+(i+1));
 							if (value[2].equals("")) {
 								if (wait.until(ExpectedConditions.elementToBeClickable(By.id(value[1]))) != null) {
 									driver.findElement(By.id(value[1])).click();
@@ -256,7 +255,6 @@ public class singleCaseProcess {
 					case "点击_xpath":
 						try {
 							WebDriverWait wait = new WebDriverWait(driver, maxWaitTime);// 最多等待时间由maxWaitTime指定
-							System.out.println("value[1]"+value[1]+executeDevicename+"用例编号"+(i+1));
 							if (value[2].equals("")) {
 								if (wait.until(ExpectedConditions.elementToBeClickable(By.xpath(value[1]))) != null) {
 
@@ -333,7 +331,6 @@ public class singleCaseProcess {
 						break;
 					case "长按_id":
 						try {
-							System.out.println("value[1]"+value[1]+executeDevicename+"用例编号"+(i+1));
 							WebDriverWait wait = new WebDriverWait(driver, maxWaitTime);// 最多等待时间由maxWaitTime指定
 							if (value[2].equals("")) {
 								if (wait.until(ExpectedConditions.elementToBeClickable(By.id(value[1])))!=null) {
@@ -362,7 +359,6 @@ public class singleCaseProcess {
 						break;
 					case "长按_name":
 						try {
-
 							WebDriverWait wait = new WebDriverWait(driver, maxWaitTime);// 最多等待时间由maxWaitTime指定
 							if (value[2].equals("")) {
 								wait.until(ExpectedConditions.elementToBeClickable(By.name(value[1])));
@@ -383,8 +379,7 @@ public class singleCaseProcess {
 						}
 						excel.writeResult(value[4], resultMessage, executeDevicename);
 						break;
-					case "长按_xpath":
-						System.out.println("value[1]"+value[1]+executeDevicename+"用例编号"+(i+1));
+					case "长按_xpath":						
 						try {
 							WebDriverWait wait = new WebDriverWait(driver, maxWaitTime);// 最多等待时间由maxWaitTime指定
 							if (value[2].equals("")) {
