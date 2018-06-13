@@ -29,7 +29,7 @@ public class singleCaseProcess {
 	private static final int CELL_TYPE_STRING = 0;
 	public static boolean a = true;
 	boolean stepExec = true;
-	public int caseSequence, maxWaitTime = 40;
+	public int caseSequence, maxWaitTime =6;
 	String resultMessage = new String(""); // 非检查点的步骤，写入测试报告时，保存错误信息
 	String checkResult = new String(""); // 检查点步骤，写入测试报告时，保存检查结果
 	String actualValue = new String("");; // 检查点步骤，实际值
@@ -84,15 +84,27 @@ public class singleCaseProcess {
 					row.getCell(j).setCellType(Cell.CELL_TYPE_STRING);
 					value[j] = row.getCell(j).getStringCellValue().trim();// 操作类型
 				}
-				stepExec = warpingFunctions.getIfCaseExec(driver, value[0], value[3], stepExec); // 判断该步骤是否需要执行。
+				try {
+					stepExec = warpingFunctions.getIfCaseExec(driver, value[0], value[3], stepExec); // 判断该步骤是否需要执行。
+					
+				} catch (Exception e) {
+					System.out.println(e.getMessage());
+				}
 				if (stepExec == false) // 如果不需要执行，直接打印该步骤的日志
 				{
 					resultMessage = "条件不成立该步骤不执行";
+					System.out.print("设备" + executeDevicename + ": 用例编号" + (i + 1) + resultMessage + "\r");
 					excel.writeResult(value[4], resultMessage, executeDevicename);// 写入单个测试用例单个步骤的执行结果
 				} else // 否则清空错误日志，用例步骤顺序执行
 				{
 					resultMessage = "";
 					switch (value[0]) {
+					case "if_文本包含":
+						excel.writeResult(value[4], resultMessage, executeDevicename);// 写入单个测试用例单个步骤的执行结果
+						break;
+					case "end":
+						excel.writeResult(value[4], resultMessage, executeDevicename);// 写入单个测试用例单个步骤的执行结果
+						break;
 					case "手势密码_xpath":
 						try {
 							WebDriverWait wait = new WebDriverWait(driver, maxWaitTime);// 最多等待时间由maxWaitTime指定
@@ -219,8 +231,9 @@ public class singleCaseProcess {
 						try {
 							WebDriverWait wait = new WebDriverWait(driver, maxWaitTime);// 最多等待时间由maxWaitTime指定
 
+							System.out.println("value[1]"+value[1]+executeDevicename+"用例编号"+(i+1));
 							if (value[2].equals("")) {
-								if (ExpectedConditions.elementToBeClickable(By.id(value[1])) != null) {
+								if (wait.until(ExpectedConditions.elementToBeClickable(By.id(value[1]))) != null) {
 									driver.findElement(By.id(value[1])).click();
 								}
 
@@ -243,6 +256,7 @@ public class singleCaseProcess {
 					case "点击_xpath":
 						try {
 							WebDriverWait wait = new WebDriverWait(driver, maxWaitTime);// 最多等待时间由maxWaitTime指定
+							System.out.println("value[1]"+value[1]+executeDevicename+"用例编号"+(i+1));
 							if (value[2].equals("")) {
 								if (wait.until(ExpectedConditions.elementToBeClickable(By.xpath(value[1]))) != null) {
 
@@ -319,11 +333,16 @@ public class singleCaseProcess {
 						break;
 					case "长按_id":
 						try {
+							System.out.println("value[1]"+value[1]+executeDevicename+"用例编号"+(i+1));
 							WebDriverWait wait = new WebDriverWait(driver, maxWaitTime);// 最多等待时间由maxWaitTime指定
 							if (value[2].equals("")) {
-								wait.until(ExpectedConditions.elementToBeClickable(By.id(value[1])));
-								WebElement test = driver.findElement(By.id(value[1]));
-								driver.tap(1, test, 5000);
+								if (wait.until(ExpectedConditions.elementToBeClickable(By.id(value[1])))!=null) {
+									WebElement test = driver.findElement(By.id(value[1]));
+									if (test!=null) {
+										driver.tap(1, test, 5000);
+									}
+								}
+								
 							} else {
 								wait.until(ExpectedConditions.elementToBeClickable(
 										driver.findElements(By.id(value[1])).get(Integer.parseInt(value[2]))));
@@ -365,6 +384,7 @@ public class singleCaseProcess {
 						excel.writeResult(value[4], resultMessage, executeDevicename);
 						break;
 					case "长按_xpath":
+						System.out.println("value[1]"+value[1]+executeDevicename+"用例编号"+(i+1));
 						try {
 							WebDriverWait wait = new WebDriverWait(driver, maxWaitTime);// 最多等待时间由maxWaitTime指定
 							if (value[2].equals("")) {

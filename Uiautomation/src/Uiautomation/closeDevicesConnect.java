@@ -13,8 +13,8 @@ public class closeDevicesConnect {
 			if (prop.getProperty("os.name") != null && prop.getProperty("os.name").indexOf("Mac") > -1) { // 判断是否为Mac系统
 				String executecmd = "lsof -i -P";
 				String line = null;
-				String[] executecmdarray = new String[10];
-				String[] pidlistarray = new String[10];
+				String[] executecmdarray = new String[15];
+				String[] pidlistarray = new String[15];
 				StringBuffer cmdresults = new StringBuffer();
 				Runtime runtime = Runtime.getRuntime();
 				BufferedReader cmdlines = new BufferedReader(
@@ -40,8 +40,8 @@ public class closeDevicesConnect {
 			} else {
 				String executecmd = "netstat -aon";
 				String line = null;
-				String[] executecmdarray = new String[10];
-				String[] pidlistarray = new String[10];
+				String[] executecmdarray = new String[15];
+				String[] pidlistarray = new String[15];
 				StringBuffer cmdresults = new StringBuffer();
 				Runtime runtime = Runtime.getRuntime();
 				BufferedReader cmdlines = new BufferedReader(

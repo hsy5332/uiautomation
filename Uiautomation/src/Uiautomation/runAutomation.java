@@ -89,7 +89,7 @@ class RunnableDemo implements Runnable {
 		DesiredCapabilities capabilities = new DesiredCapabilities();
 		try {
 			String connectlink;
-			if (excuteSystem.indexOf("linux") != -1 || excuteSystem.indexOf("Linux") != -1) {
+			if (connectIp.indexOf("192.168") != -1 ) {
 				connectlink = connectIp + ":" + executePort + "/wd/hub";
 				appPath = linuxApkPath;
 
@@ -128,6 +128,7 @@ class RunnableDemo implements Runnable {
 					try {
 						sCP.processHandle(singleTest, driver, testCaseName, executeDevicename);
 					} catch (IOException e) {
+						System.out.println(e.getMessage());
 						e.printStackTrace();
 					}
 					String execResult = sCP.getCaseExecResult();
@@ -163,6 +164,8 @@ class runAutomation {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		
+		// 读取Test.properties 配置信息
 		String appPackage = test1.appPackage;
 		String appActivity = test1.str11;
 		String platformName = "Android";
@@ -171,37 +174,18 @@ class runAutomation {
 		String[] connectip = test1.connectip.split(",");
 		String[] devicescount = test1.devicescount.split(",");
 		String linuxapkpath = test1.linuxapkpath;
-		// 读取Test.properties 配置信息
 
 		Object[] deviceUdid = GetDevices.getUdid();
 		if (deviceUdid == null || deviceUdid.length < 1) {
 			System.out.println("无设备连接");
 			return;
 		}
-		for (int devcount = 0; devcount < deviceUdid.length; devcount++) {
-			System.out.print("黄顺耀：");
-			System.out.print(deviceUdid[devcount] + "\r\n");
-		}
+		System.out.println("devices count："+deviceUdid.length);
+		
 		// 获取设备ID
-
 		Object[] connectPort = (Object[]) AppiumServerManager.startAppiumServer(deviceUdid.length).toArray();
-		if (deviceUdid.length > connectPort.length) {
-			Object[] realdeviceUdid = new Object[connectPort.length];
-			for (int deviceUdidcount = 0; deviceUdidcount < connectPort.length; deviceUdidcount++) {
-				realdeviceUdid[deviceUdidcount] = deviceUdid[deviceUdidcount];
-			}
-			deviceUdid = realdeviceUdid;
-		}
-		if (deviceUdid.length < connectPort.length) {
-			Object[] realconnectPort = new Object[deviceUdid.length];
-			for (int connectPortcount = 0; connectPortcount < deviceUdid.length; connectPortcount++) {
-				realconnectPort[connectPortcount] = connectPort[connectPortcount];
-			}
-			connectPort = realconnectPort;
-
-		}
+		
 		// 获取连接的端口好,判断设备数是否大于端口数 deviceUdid.length 设备数
-
 		if (deviceUdid.length <= 1 && connectip.length > 1) {
 			System.out.print("请检查配置文件中设备数和IP是否正确,IP数如果大于1,设备数则必须大于1。");
 		} else {
