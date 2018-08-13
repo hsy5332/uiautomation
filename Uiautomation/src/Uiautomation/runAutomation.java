@@ -14,7 +14,7 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 import io.appium.java_client.android.AndroidDriver;
 
 class RunnableDemo implements Runnable {
-	private static AndroidDriver driver;
+	private  AndroidDriver driver;
 	private Thread t;
 	private String threadName;
 	private String executeDevicename;
@@ -122,7 +122,7 @@ class RunnableDemo implements Runnable {
 						System.out.println("文件" + testCaseName + "不存在");
 						continue ;
 					}
-					singleCaseProcess sCP = new singleCaseProcess();
+					singleCaseProcess sCP=new singleCaseProcess();
 					System.out.println("设备:" + executeDevicename + "执行测试用例: " + testCaseName);
 					sCP.setCaseSequence(testCaseName); // 根据case名称，设置数据文件中对应的行号
 					try {
