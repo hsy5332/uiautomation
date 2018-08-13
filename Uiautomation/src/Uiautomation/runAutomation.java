@@ -120,7 +120,7 @@ class RunnableDemo implements Runnable {
 					singleTest = new File(result1 + testCaseName + ".xlsx"); // 要不要执行该测试用例
 					if (!singleTest.exists()) {
 						System.out.println("文件" + testCaseName + "不存在");
-						return;
+						continue ;
 					}
 					singleCaseProcess sCP = new singleCaseProcess();
 					System.out.println("设备:" + executeDevicename + "执行测试用例: " + testCaseName);
@@ -133,6 +133,7 @@ class RunnableDemo implements Runnable {
 					}
 					String execResult = sCP.getCaseExecResult();
 					allCP.writeAllResult(execResult, i);
+					
 				}
 			}
 			closeConnect.closeDevicesCmd(executePort, executeUdid, executeDevicename, uninstallcmd);
