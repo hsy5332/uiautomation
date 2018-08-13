@@ -80,7 +80,7 @@ public class singleCaseProcess {
 				String[] value = new String[] { "", "", "", "", "", "" };
 				for (int j = 0; j < 6; j++) {
 					if (row.getCell(j) == null)
-						;
+						continue;
 					row.getCell(j).setCellType(Cell.CELL_TYPE_STRING);
 					value[j] = row.getCell(j).getStringCellValue().trim();// 操作类型
 				}
@@ -1157,7 +1157,7 @@ public class singleCaseProcess {
 					if (resultMessage.length() == 0) {
 						System.out.print("设备" + executeDevicename + ": 用例编号" + (i + 1) + "成功跑通" + "\r");
 					} else {
-						System.out.print("设备" + executeDevicename + ": 用例编号" + (i + 1) + "跑失败" + "\r");
+						System.out.print("设备" + executeDevicename + ": 用例编号" + (i + 1) + "跑失败" + "\r"+"用例："+value[1]);
 						caseExecResult = "fail";
 					}
 				}
