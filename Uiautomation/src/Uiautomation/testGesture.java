@@ -26,23 +26,23 @@ public class testGesture {
     	switch (actualparameter)
     	{
     	case "向左滑动":
-    		Thread.sleep(3000);
-    		driver.swipe(width*9/10, height / 2, width/10, height / 2, 3000);
+    		Thread.sleep(1000);
+    		driver.swipe(width*11/12, height / 2, width/20, height / 2, 2500);
     		Thread.sleep(1000);
     		break;
     	case "向右滑动":
     		Thread.sleep(3000);
-    		driver.swipe(width/10, height / 2, width*9/10, height / 2, 3000);
+    		driver.swipe(width/10, height / 2, width*9/10, height / 2, 2000);
     		Thread.sleep(1000);
     		break;
     	case "向上滑动":
-    		Thread.sleep(3000);
-    		driver.swipe(width / 2, height*8 / 10, width / 2, height /10, 3000);
+    		Thread.sleep(1000);
+    		driver.swipe(width / 2, height*8 / 10, width / 2, height /10, 1000);
     		Thread.sleep(1000);
     		break;
     	case "向下滑动":
     		Thread.sleep(3000);
-    		driver.swipe(width / 2, height*2 / 10, width / 2, height*8 /10, 3000);
+    		driver.swipe(width / 2, height*3 / 10, width / 2, height*9 /10, 1000);
     		Thread.sleep(1000);
     		break;
     	default :
