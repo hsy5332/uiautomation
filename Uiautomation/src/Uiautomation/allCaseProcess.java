@@ -96,11 +96,11 @@ public  void writeAllResult(String execResult, int i) {
 		e.printStackTrace();
 	}
   }
-public void writeallHeader() throws IOException{
+public void writeallHeader(String device) throws IOException{
 
 		 test1.testmethod();
 		 String result4= test1.str4;//获取测试报告的生成路径
-		 excelPath=result4+"总体测试报告"+String.valueOf(dateUtil.getYear(eOP.date))+"-"+String.valueOf(dateUtil.getMonth(eOP.date))+"-"+String.valueOf(dateUtil.getDay(eOP.date))+"-"+String.valueOf(dateUtil.getHour(eOP.date))+"-"+String.valueOf(dateUtil.getMinute(eOP.date))+".xlsx";	
+		 excelPath=result4+device+"-总体测试报告"+String.valueOf(dateUtil.getYear(eOP.date))+"-"+String.valueOf(dateUtil.getMonth(eOP.date))+"-"+String.valueOf(dateUtil.getDay(eOP.date))+"-"+String.valueOf(dateUtil.getHour(eOP.date))+"-"+String.valueOf(dateUtil.getMinute(eOP.date))+".xlsx";	
 		Workbook workbook = new XSSFWorkbook();
 		Sheet sheet = workbook.createSheet("testdata1");
 		FileOutputStream outputStream = new FileOutputStream(excelPath);
