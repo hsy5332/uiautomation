@@ -75,7 +75,7 @@ class RunnableDemo implements Runnable {
 		}
 		allCaseProcess allCP = new allCaseProcess();
 		try {
-			allCP.writeallHeader();// 生成总体测试报告的标题行
+			allCP.writeallHeader(executeDevicename);// 生成总体测试报告的标题行
 		} catch (IOException e2) {
 			e2.printStackTrace();
 		}
@@ -124,7 +124,7 @@ class RunnableDemo implements Runnable {
 					}
 					singleCaseProcess sCP=new singleCaseProcess();
 					System.out.println("设备:" + executeDevicename + "执行测试用例: " + testCaseName);
-					sCP.setCaseSequence(testCaseName); // 根据case名称，设置数据文件中对应的行号
+					sCP.setCaseSequence(testCaseName,executeDevicename); // 根据case名称，设置数据文件中对应的行号
 					try {
 						sCP.processHandle(singleTest, driver, testCaseName, executeDevicename);
 					} catch (IOException e) {

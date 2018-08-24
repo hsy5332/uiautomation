@@ -44,9 +44,9 @@ public class singleCaseProcess {
 	testData TD = new testData();
 	testGesture TG = new testGesture();
 
-	public void setCaseSequence(String caseName) {
+	public void setCaseSequence(String caseName,String executeDevicename) {
 		// caseSequence = CSQ;
-		TD.setNowNumber(caseName);// 设置“测试数据相关.xlsx”中的行序号
+		TD.setNowNumber(caseName,executeDevicename);// 设置“测试数据相关.xlsx”中的行序号
 
 	}
 
