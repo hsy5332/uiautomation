@@ -230,7 +230,9 @@ public class singleCaseProcess {
                                   bot = driver.findElements(By.id(value[1]));
                                   seekBar=bot.get(Integer.parseInt(value[2]));
                               }
-                              TG.moveSeekBar(seekBar,driver,Float.parseFloat(value[3]));
+                              String fromPercent = (value[5] == "") ? "0" : value[5];
+                              String toPercent = (value[3] == "") ? "0" : value[3];
+                              TG.moveSeekBar(seekBar, driver, Float.parseFloat(fromPercent), Float.parseFloat(toPercent));
 
                           } catch (Exception e) {
                               resultMessage = e.getMessage();

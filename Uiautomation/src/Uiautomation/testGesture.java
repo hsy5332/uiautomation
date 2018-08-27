@@ -272,23 +272,26 @@ public class testGesture {
 
 	}
 	/**
-	 * seekBar的滑动
-	 * @param seekBar 元素
-	 * @param driver  驱动
-	 * @param percent seekBar要滑动的百分比
-	 */
-	 public void moveSeekBar(WebElement seekBar,AndroidDriver driver ,float percent){
+     * seekBar的滑动
+     * @param seekBar 元素
+     * @param driver  驱动
+     * @param fromPercent seekBar要滑动的百分比开始位置
+     * @param toPercent   seekBar要滑动的百分比结束位置
+     */
+    public void moveSeekBar(WebElement seekBar,AndroidDriver driver ,float fromPercent ,float toPercent){
 
-	        int startX = seekBar.getLocation().getX(); //获取 seekbar的X坐标.
-	        int endX = seekBar.getSize().getWidth(); //获取 seekbar的宽度.
+        int startX = seekBar.getLocation().getX(); //获取 seekbar的X坐标.
+        int endX = seekBar.getSize().getWidth(); //获取 seekbar的宽度.
 
-	        int yAxis = seekBar.getLocation().getY(); //获取 seekbar的Y坐标.
-	        int moveToXDirectionAt = (int) (endX *percent);//endX * percent 表示seekbar宽度的 percent% .
+        int yAxis = seekBar.getLocation().getY(); //获取 seekbar的Y坐标.
+        int startXDirectionAt =  fromPercent == 0 ? startXDirectionAt=startX :(int) (endX *fromPercent);//endX * percent 表示seekbar宽度的 percent% .
+        int moveToXDirectionAt = (int) (endX *toPercent);//endX * percent 表示seekbar宽度的 percent% .
+        System.out.println("startX:"+startX+"startXDirectionAt:"+startXDirectionAt+"percent"+fromPercent+toPercent);
+        System.out.println("Moving seek bar at " +startXDirectionAt+" to "+ moveToXDirectionAt+" In X direction.");
 
-	        TouchAction act=new TouchAction(driver);
-	        act.press(startX,yAxis).moveTo(moveToXDirectionAt,yAxis).release().perform(); //滑动
-	    }
-
+        TouchAction act=new TouchAction(driver);
+        act.press(startXDirectionAt,yAxis).moveTo(moveToXDirectionAt,yAxis).release().perform(); //滑动
+    }
 	public String getReturnMessage() {
 		return returnMessage;
 	}
