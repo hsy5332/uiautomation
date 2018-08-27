@@ -215,6 +215,29 @@ public class singleCaseProcess {
 						}
 						excel.writeResult(value[4], resultMessage, executeDevicename);// 写入单个测试用例单个步骤的执行结果
 						break;
+						
+					  case "滑动_seekBar":
+                          try {
+                              WebDriverWait wait = new WebDriverWait(driver, maxWaitTime);// 最多等待时间由maxWaitTime指定
+                              WebElement seekBar =null;
+                              if (value[2].equals("")) {
+                                  if (wait.until(ExpectedConditions.elementToBeClickable(By.id(value[1]))) != null) {
+
+                                      seekBar =driver.findElement(By.id(value[1]));
+                                  }
+                              } else {
+                                  wait.until(ExpectedConditions.elementToBeClickable((WebElement) driver.findElements(By.id(value[1])).get(Integer.parseInt(value[2]))));
+                                  bot = driver.findElements(By.id(value[1]));
+                                  seekBar=bot.get(Integer.parseInt(value[2]));
+                              }
+                              TG.moveSeekBar(seekBar,driver,Float.parseFloat(value[3]));
+
+                          } catch (Exception e) {
+                              resultMessage = e.getMessage();
+                              caseExecResult = "failure";
+                          }
+                          excel.writeResult(value[4] , resultMessage, executeDevicename);
+                          break;
 
 					case "点击_AccessibilityId":
 						try {
