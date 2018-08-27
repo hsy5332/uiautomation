@@ -281,11 +281,9 @@ public class testGesture {
 
 	        int startX = seekBar.getLocation().getX(); //获取 seekbar的X坐标.
 	        int endX = seekBar.getSize().getWidth(); //获取 seekbar的宽度.
-	        System.out.println(startX+"to X "+endX);
 
 	        int yAxis = seekBar.getLocation().getY(); //获取 seekbar的Y坐标.
 	        int moveToXDirectionAt = (int) (endX *percent);//endX * percent 表示seekbar宽度的 percent% .
-	        System.out.println("Moving seek bar at " + moveToXDirectionAt+" In X direction.");
 
 	        TouchAction act=new TouchAction(driver);
 	        act.press(startX,yAxis).moveTo(moveToXDirectionAt,yAxis).release().perform(); //滑动
