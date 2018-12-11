@@ -29,7 +29,7 @@ public class test {
 
 	public static void testmethod() throws FileNotFoundException, IOException {
 		Properties pps = new Properties();
-		pps.load(new FileInputStream("Test-mh.properties"));
+		pps.load(new FileInputStream("Test-zs.properties"));
 		Enumeration enum1 = pps.propertyNames();// 得到配置文件名
 		while (enum1.hasMoreElements()) {
 			String strKey = (String) enum1.nextElement();
