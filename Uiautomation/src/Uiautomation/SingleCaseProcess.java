@@ -677,30 +677,6 @@ public class SingleCaseProcess {
                             excel.writeCheckResult(value[4], resultMessage, checkResult, actualValue, expectedValue, executeDevicename);
                             break;
 
-                        case "检查点_toast":
-                            try {
-                                WebDriverWait wait = new WebDriverWait(driver, maxWaitTime);// 最多等待时间由maxWaitTime指定
-                                wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//android.widget.Toast[1]")));
-
-                                WebElement toastView = driver.findElement(By.xpath("//android.widget.Toast[1]"));
-
-                                actualValue = toastView.getAttribute("name");
-                                expectedValue = value[5];
-                                checkResult = WarpingFunctions.verifyTest(actualValue, expectedValue);
-
-                                if ((checkResult == ""||checkResult == "fail")) {
-                                    FileUtil.takeTakesScreenshot(driver);
-                                    resultMessage = FileUtil.filePath;
-                                    caseExecResult = "fail";
-                                }
-                            } catch (Exception e) {
-                                resultMessage = e.getMessage();
-                                checkResult = "failure";
-                                caseExecResult = "failure";
-                            }
-                            excel.writeCheckResult(value[4], resultMessage, checkResult, actualValue, expectedValue, executeDevicename);
-                            break;
-
                         case "检查点_id":
                             try {
                                 WebDriverWait wait = new WebDriverWait(driver, maxWaitTime);// 最多等待时间由maxWaitTime指定
