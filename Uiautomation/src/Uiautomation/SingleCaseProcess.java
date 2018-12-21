@@ -8,6 +8,8 @@ import java.io.InputStream;
 import java.time.Duration;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -81,24 +83,25 @@ public class SingleCaseProcess {
                     return; // 判断Excel是否有多余的空行数
                 String[] value = new String[7];
                 for (int j = 0; j < 7; j++) {
-                    if (row.getCell(j) == null){
-                        value[j]="";
+                    if (row.getCell(j) == null) {
+                        value[j] = "";
                         continue;
                     }
                     row.getCell(j).setCellType(Cell.CELL_TYPE_STRING);
                     value[j] = row.getCell(j).getStringCellValue().trim();// 操作类型
                 }
                 try {
-                    stepExec = WarpingFunctions.getIfCaseExec(driver, value[0], value[3], stepExec,value[2],value[1]); // 判断该步骤是否需要执行。
-
+                    stepExec = WarpingFunctions.getIfCaseExec(driver, value[0], value[3], stepExec, value[2], value[1]); // 判断该步骤是否需要执行。
                 } catch (Exception e) {
                     System.out.println(e.getMessage());
                 }
-                if (stepExec == false) // 如果不需要执行，直接打印该步骤的日志
+                if ((stepExec == false )) // 如果不需要执行，直接打印该步骤的日志
                 {
+
                     resultMessage = "条件不成立该步骤不执行";
                     System.out.println("设备：" + executeDevicename + ": 用例编号" + (i + 1) + resultMessage + "\r");
                     excel.writeResult(value[4], resultMessage, executeDevicename);// 写入单个测试用例单个步骤的执行结果
+
                 } else // 否则清空错误日志，用例步骤顺序执行
                 {
                     resultMessage = "";
@@ -116,9 +119,9 @@ public class SingleCaseProcess {
                     }
 
                     //切换至H5
-                    if (value[6]!=null&&!value[6].equals("")){
-                        if (value[6].equals("H5")||value[6].equals("h5")){
-                            if (webviewApp!=null&&!webviewApp.equals("")){
+                    if (value[6] != null && !value[6].equals("")) {
+                        if (value[6].equals("H5") || value[6].equals("h5")) {
+                            if (webviewApp != null && !webviewApp.equals("")) {
                                 driver.context(webviewApp);
                                 System.out.println("切换到webview：" + webviewApp);
                             }
@@ -126,7 +129,6 @@ public class SingleCaseProcess {
                     }
 
                     switch (value[0]) {
-
 
 
                         case "if_文本包含":
@@ -160,7 +162,7 @@ public class SingleCaseProcess {
                             excel.writeResult(value[4], resultMessage, executeDevicename);// 写入单个测试用例单个步骤的执行结果
                             break;
 
-                            //不建议使用的方法
+                        //不建议使用的方法
 //                        case "滚动查找点击元素":// 只能第一页查找，不能翻页查找元素
 //                            try {
 //                                WebDriverWait wait = new WebDriverWait(driver, maxWaitTime);// 最多等待时间由maxWaitTime指定
@@ -175,7 +177,7 @@ public class SingleCaseProcess {
                         case "向下滑动查找元素_id":// 可以翻页查找元素
                             try {
                                 WebDriverWait wait = new WebDriverWait(driver, maxWaitTime);// 最多等待时间由maxWaitTime指定
-                                TG.swipeToelement(value[1], driver, value[3], bot);
+                                TG.swipeToelement(value[1], driver, value[3], value[5]);
                             } catch (Exception e) {
                                 resultMessage = e.getMessage();
                                 caseExecResult = "failure";
@@ -228,7 +230,7 @@ public class SingleCaseProcess {
                                     tmpCount = tmpCount + 1;
                                     str1 = driver.getPageSource(); // 滑动前获取pagesource
 //                                    driver.swipe(width / 2, height * 9 / 10, width / 2, height / 10, 2000);
-                                    TouchAction touchAction=new TouchAction(driver);
+                                    TouchAction touchAction = new TouchAction(driver);
                                     touchAction.press(width / 2, height * 9 / 10).waitAction(Duration.ofMillis(2000)).moveTo(width / 2, height / 10).release().perform();
 
                                     Thread.sleep(2000);
@@ -354,12 +356,12 @@ public class SingleCaseProcess {
                         case "长按_id":
                             try {
                                 WebDriverWait wait = new WebDriverWait(driver, maxWaitTime);// 最多等待时间由maxWaitTime指定
-                                TouchAction touchAction=new TouchAction(driver);
+                                TouchAction touchAction = new TouchAction(driver);
                                 if (value[2].equals("")) {
                                     if (wait.until(ExpectedConditions.elementToBeClickable(By.id(value[1]))) != null) {
                                         WebElement test = driver.findElement(By.id(value[1]));
                                         if (test != null) {
-                                            touchAction.longPress(test , Duration.ofMillis(4000));
+                                            touchAction.longPress(test, Duration.ofMillis(4000));
                                             driver.performTouchAction(touchAction);
 
 
@@ -370,7 +372,7 @@ public class SingleCaseProcess {
                                     wait.until(ExpectedConditions.elementToBeClickable((WebElement) driver.findElements(By.id(value[1])).get(Integer.parseInt(value[2]))));
                                     bot = driver.findElements(By.id(value[1]));
                                     WebElement test = bot.get(Integer.parseInt(value[2]));
-                                    touchAction.longPress(test , Duration.ofMillis(4000)).release().perform();
+                                    touchAction.longPress(test, Duration.ofMillis(4000)).release().perform();
 
                                 }
 
@@ -384,16 +386,16 @@ public class SingleCaseProcess {
                         case "长按_xpath":
                             try {
                                 WebDriverWait wait = new WebDriverWait(driver, maxWaitTime);// 最多等待时间由maxWaitTime指定
-                                TouchAction touchAction=new TouchAction(driver);
+                                TouchAction touchAction = new TouchAction(driver);
                                 if (value[2].equals("")) {
                                     wait.until(ExpectedConditions.elementToBeClickable(By.xpath(value[1])));
                                     WebElement wl = driver.findElement(By.xpath(value[1]));
-                                    touchAction.longPress(wl , Duration.ofMillis(4000)).release().perform();
+                                    touchAction.longPress(wl, Duration.ofMillis(4000)).release().perform();
                                 } else {
                                     wait.until(ExpectedConditions.elementToBeClickable((WebElement) driver.findElements(By.xpath(value[1])).get(Integer.parseInt(value[2]))));
                                     bot = driver.findElements(By.xpath(value[1]));
                                     WebElement wl = bot.get(Integer.parseInt(value[2]));
-                                    touchAction.longPress(wl , Duration.ofMillis(4000)).release().perform();
+                                    touchAction.longPress(wl, Duration.ofMillis(4000)).release().perform();
 
                                 }
 
@@ -601,7 +603,17 @@ public class SingleCaseProcess {
                             try {
                                 int currentNumber;
                                 if (value[3].equals("点赞数")) {
-                                    currentNumber = Integer.parseInt(TD.getTestData("点赞数", executeDevicename)) + 1;
+                                    Pattern pattern = Pattern.compile("^[0-9]*$");
+                                    String dianzan=TD.getTestData("点赞数", executeDevicename);
+                                    Matcher isNum = pattern.matcher(dianzan);
+
+                                    if(!isNum.matches() ){
+                                        currentNumber = 1;
+                                        System.out.println("不匹配");
+                                    }else {
+                                        currentNumber = Integer.parseInt(dianzan) + 1;
+                                        System.out.println("匹配");
+                                    }
                                     TD.setTestData("点赞数", Integer.toString(currentNumber), executeDevicename);
                                 } else if (value[3].equals("回复数")) {
                                     currentNumber = Integer.parseInt(TD.getTestData("回复数", executeDevicename)) + 1;
@@ -664,7 +676,31 @@ public class SingleCaseProcess {
                                 actualValue = driver.findElement(By.xpath(value[1])).getText();
                                 expectedValue = value[5];
                                 checkResult = WarpingFunctions.verifyTest(actualValue, expectedValue);
-                                if ((checkResult == ""||checkResult == "fail")) {
+                                if ((checkResult == "" || checkResult == "fail")) {
+                                    FileUtil.takeTakesScreenshot(driver);
+                                    resultMessage = FileUtil.filePath;
+                                    caseExecResult = "fail";
+                                }
+                            } catch (Exception e) {
+                                resultMessage = e.getMessage();
+                                checkResult = "failure";
+                                caseExecResult = "failure";
+                            }
+                            excel.writeCheckResult(value[4], resultMessage, checkResult, actualValue, expectedValue, executeDevicename);
+                            break;
+
+                        case "检查点_toast":
+                            try {
+                                WebDriverWait wait = new WebDriverWait(driver, maxWaitTime);// 最多等待时间由maxWaitTime指定
+                                wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//android.widget.Toast[1]")));
+
+                                WebElement toastView = driver.findElement(By.xpath("//android.widget.Toast[1]"));
+
+                                actualValue = toastView.getAttribute("name");
+                                expectedValue = value[5];
+                                checkResult = WarpingFunctions.verifyTest(actualValue, expectedValue);
+
+                                if ((checkResult == "" || checkResult == "fail")) {
                                     FileUtil.takeTakesScreenshot(driver);
                                     resultMessage = FileUtil.filePath;
                                     caseExecResult = "fail";
@@ -690,7 +726,7 @@ public class SingleCaseProcess {
 
                                 expectedValue = value[5];
                                 checkResult = WarpingFunctions.verifyTest(actualValue, expectedValue);
-                                if ((checkResult == ""||checkResult == "fail")) {
+                                if ((checkResult == "" || checkResult == "fail")) {
                                     FileUtil.takeTakesScreenshot(driver);
                                     resultMessage = FileUtil.filePath;
                                     caseExecResult = "fail";
@@ -708,23 +744,23 @@ public class SingleCaseProcess {
                                 Thread.sleep(2000);
                                 String pageSourceString;
                                 pageSourceString = driver.getPageSource(); // 获取页面pagesource
-                                if (value[1].equals("")) {
-                                    checkedText = value[3]; // 如果未传入取值类型，需要在value[3]中直接传入要检查的文本，否则，从测试数据文件中读取要检查的文本，作为期望值。
+                                if (value[3].equals("")) {
+                                    checkedText = value[5]; // 如果未传入取值类型，需要在value[3]中直接传入要检查的文本，否则，从测试数据文件中读取要检查的文本，作为期望值。
                                 } else {
-                                    checkedText = TD.getTestData(value[1], executeDevicename);
+                                    checkedText = TD.getTestData(value[3], executeDevicename);
                                 }
 
                                 actualValue = checkedText;
                                 expectedValue = checkedText; // 默认情况下，假定校验成功，在期望结果与实际结果一样
                                 int count = 0;
-                                while ((checkResult == ""||checkResult == "fail") && count < 3) {
+                                while ((checkResult == "" || checkResult == "fail") && count < 3) {
                                     pageSourceString = driver.getPageSource(); // 获取页面pagesource
                                     Thread.sleep(1000);
                                     checkResult = WarpingFunctions.verifyContainTest(pageSourceString, checkedText, "y");
                                     count++;
                                 }
 
-                                if ((checkResult == ""||checkResult == "fail")) {
+                                if ((checkResult == "" || checkResult == "fail")) {
                                     FileUtil.takeTakesScreenshot(driver);
                                     resultMessage = FileUtil.filePath;
                                     caseExecResult = "fail";
@@ -743,21 +779,21 @@ public class SingleCaseProcess {
                                 String checkedText;
                                 String pageSourceString;
                                 pageSourceString = driver.getPageSource(); // 获取页面pagesource
-                                if (value[1].equals("")) {
-                                    checkedText = value[3]; // 如果未传入取值类型，需要在value[3]中直接传入要检查的文本，否则，从测试数据文件中读取要检查的文本，作为期望值。
+                                if (value[3].equals("")) {
+                                    checkedText = value[5]; // 如果未传入取值类型，需要在value[3]中直接传入要检查的文本，否则，从测试数据文件中读取要检查的文本，作为期望值。
                                 } else {
-                                    checkedText = TD.getTestData(value[1], executeDevicename);
+                                    checkedText = TD.getTestData(value[3], executeDevicename);
                                 }
                                 actualValue = "";
                                 expectedValue = ""; // 默认情况下，假定校验成功，在期望结果与实际结果一样
                                 int count = 0;
-                                while ((checkResult == ""||checkResult == "fail") && count < 2) {
+                                while ((checkResult == "" || checkResult == "fail") && count < 2) {
                                     pageSourceString = driver.getPageSource(); // 获取页面pagesource
                                     Thread.sleep(1000);
                                     checkResult = WarpingFunctions.verifyContainTest(pageSourceString, checkedText, "n");
                                     count++;
                                 }
-                                if ((checkResult == ""||checkResult == "fail")) {
+                                if ((checkResult == "" || checkResult == "fail")) {
                                     FileUtil.takeTakesScreenshot(driver);
                                     resultMessage = FileUtil.filePath;
                                     caseExecResult = "fail";
@@ -793,7 +829,7 @@ public class SingleCaseProcess {
                                 expectedValue = smallText; // 默认情况下，假定校验成功，在期望结果与实际结果一样
 
                                 checkResult = WarpingFunctions.verifyContainTest(bigText, smallText, "y");
-                                if ((checkResult == ""||checkResult == "fail")) {
+                                if ((checkResult == "" || checkResult == "fail")) {
                                     FileUtil.takeTakesScreenshot(driver);
                                     resultMessage = FileUtil.filePath;
                                     caseExecResult = "fail";
@@ -830,7 +866,7 @@ public class SingleCaseProcess {
                                 expectedValue = smallText; // 默认情况下，假定校验成功，在期望结果与实际结果一样
 
                                 checkResult = WarpingFunctions.verifyContainTest(bigText, smallText, "y");
-                                if ((checkResult == ""||checkResult == "fail")) {
+                                if ((checkResult == "" || checkResult == "fail")) {
                                     FileUtil.takeTakesScreenshot(driver);
                                     resultMessage = FileUtil.filePath;
                                     caseExecResult = "fail";
@@ -867,7 +903,7 @@ public class SingleCaseProcess {
                                 expectedValue = ""; // 默认情况下，假定校验成功，在期望结果与实际结果一样
 
                                 checkResult = WarpingFunctions.verifyContainTest(bigText, smallText, "n");
-                                if ((checkResult == ""||checkResult == "fail")) {
+                                if ((checkResult == "" || checkResult == "fail")) {
                                     FileUtil.takeTakesScreenshot(driver);
                                     resultMessage = FileUtil.filePath;
                                     caseExecResult = "fail";
@@ -904,7 +940,7 @@ public class SingleCaseProcess {
                                 expectedValue = ""; // 默认情况下，假定校验成功，在期望结果与实际结果一样
 
                                 checkResult = WarpingFunctions.verifyContainTest(bigText, smallText, "n");
-                                if ((checkResult == ""||checkResult == "fail")) {
+                                if ((checkResult == "" || checkResult == "fail")) {
                                     FileUtil.takeTakesScreenshot(driver);
                                     resultMessage = FileUtil.filePath;
                                     caseExecResult = "fail";
@@ -956,7 +992,7 @@ public class SingleCaseProcess {
                                 expectedValue = smallText; // 默认情况下，假定校验成功，在期望结果与实际结果一样
 
                                 checkResult = WarpingFunctions.verifyContainTest(bigText, smallText, "y");
-                                if ((checkResult == ""||checkResult == "fail")) {
+                                if ((checkResult == "" || checkResult == "fail")) {
                                     FileUtil.takeTakesScreenshot(driver);
                                     resultMessage = FileUtil.filePath;
                                     caseExecResult = "fail";
@@ -982,7 +1018,7 @@ public class SingleCaseProcess {
                                 int actualValue = totalString;
                                 int expectedValue = totalString; // 默认情况下，假定校验成功，在期望结果与实际结果一样
                                 checkResult = WarpingFunctions.comment(comment2, totalString);
-                                if ((checkResult == ""||checkResult == "fail")) {
+                                if ((checkResult == "" || checkResult == "fail")) {
                                     FileUtil.takeTakesScreenshot(driver);
                                     resultMessage = FileUtil.filePath;
                                     caseExecResult = "fail";
@@ -1049,7 +1085,7 @@ public class SingleCaseProcess {
                                 expectedValue = smallText; // 默认情况下，假定校验成功，在期望结果与实际结果一样
 
                                 checkResult = WarpingFunctions.verifyContainTest(bigText, smallText, "y");
-                                if ((checkResult == ""||checkResult == "fail")) {
+                                if ((checkResult == "" || checkResult == "fail")) {
                                     FileUtil.takeTakesScreenshot(driver);
                                     resultMessage = FileUtil.filePath;
                                     caseExecResult = "fail";
@@ -1156,16 +1192,16 @@ public class SingleCaseProcess {
 
                     }
 //                    切换至原生
-                    if (value[6]!=null&&!value[6].equals("")) {
+                    if (value[6] != null && !value[6].equals("")) {
                         if (value[6].equals("H5") || value[6].equals("h5")) {
-                            if (nativeApp!=null&&!nativeApp.equals("")){
+                            if (nativeApp != null && !nativeApp.equals("")) {
 
                                 driver.context(nativeApp);
                                 System.out.println("切换到nativeApp：" + nativeApp);
                             }
                         }
                     }
-                    if (resultMessage!=null){
+                    if (resultMessage != null) {
                         if (resultMessage.length() == 0) {
                             System.out.println("设备" + executeDevicename + ": 用例编号" + (i + 1) + "成功跑通" + "\r");
                         } else {
