@@ -116,11 +116,14 @@ public class MultiThread implements  Runnable {
             capabilities.setCapability("noReset", "true");
             capabilities.setCapability("noSign", "true");
             capabilities.setCapability("chromedriverExecutableDir", configInfo.str6);
+            //重新创建chromeDriver
+            capabilities.setCapability("recreateChromeDriverSessions","true");
             //运行时权限（自动接受所有的权限）
             capabilities.setCapability("autoGrantPermissions", "true");
             // 配置连接的设备信息(uiautomator2)
             capabilities.setCapability("automationName", "UiAutomator2");
             capabilities.setCapability("systemPort", systemPort);
+
 
             driver = new AndroidDriver(new URL(connectlink), capabilities);
             System.out.println("设备："+executeDevicename+"sessionId"+ driver.getSessionId());
