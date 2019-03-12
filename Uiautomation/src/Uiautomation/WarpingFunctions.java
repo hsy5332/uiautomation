@@ -191,7 +191,7 @@ public class WarpingFunctions {
 
             if (oprType.contains("文本包含")) {
                 try {
-                    totalText = driver.getPageSource();
+                    totalText = driver.getPageSource().toString();
                     int k = 0;
                     while (k < 3) {
                         if (totalText.contains(containedValue)) {
@@ -224,7 +224,7 @@ public class WarpingFunctions {
             // (1)若页面中不包含字段containedValue，执行后续的用例步骤都，直到出现新的逻辑判断步骤包含在value【0】中
             // (2)若页面中包含字段containedValue，则后续的用例步骤都不执行；直到出现新的逻辑判断步骤包含在value【0】中
             else if (oprType.contains("文本不包含")) {
-                totalText = driver.getPageSource();
+                totalText = driver.getPageSource().toString();
                 int j = 0;
                 while (j < 3) {
                     if ((totalText.contains(containedValue))) {
