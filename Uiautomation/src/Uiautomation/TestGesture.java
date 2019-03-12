@@ -219,7 +219,7 @@ public class TestGesture {
         List<WebElement> bot;
         String totalText = driver.getPageSource();  //滑动前获取pagesource
         TouchAction action = new TouchAction(driver);
-        while (!findZhangJie && counter < 30) { //如果找不到，最多找10遍
+        while (!findZhangJie && counter < 20) { //如果找不到，最多找10遍
             if (totalText.contains(actualparameter)) {
                 bot = driver.findElements(By.id(actualelement));
                 for (int i = 0; i < bot.size(); i++) {
@@ -286,6 +286,10 @@ public class TestGesture {
                 displayedText = "下一章";
                 displayedText1 = "退出朗读"; //对于开卷来说，有可能弹出页面显示的信息不一样，所以不同的情况都要考虑
                 displayedText2 = "放 弃";
+            } else if (appType.equalsIgnoreCase("ZSfree")) {
+                displayedText = "目录";//老UI
+                displayedText1 = "退出朗读模式"; //对于追书来说，有可能弹出页面显示的信息不一样，所以不同的情况都要考虑
+                displayedText2 = "退出自动翻页";
             } else {
                 System.out.print("未设定app类型");
             }
@@ -310,6 +314,15 @@ public class TestGesture {
                     WebDriverWait wait = new WebDriverWait(driver, 2);// 最多等待时间由maxWaitTime指定
                     wait.until(ExpectedConditions.presenceOfElementLocated(By.id("com.ushaqi.zhuishushenqi:id/reader_oper_top_title")));
                     readedText = driver.findElement(By.id("com.ushaqi.zhuishushenqi:id/reader_oper_top_title")).getText(); // 要获取的页面元素的文本内容
+                    if (readedText != null & !readedText.equals("")) {
+                        setDisplayed = true;
+                        break;
+                    }
+                } else if (appType.equalsIgnoreCase("ZSfree")) {
+                    String readedText = null;
+                    WebDriverWait wait = new WebDriverWait(driver, 2);// 最多等待时间由maxWaitTime指定
+                    wait.until(ExpectedConditions.presenceOfElementLocated(By.id("com.ushaqi.zhuishushenqi.adfree:id/reader_oper_top_title")));
+                    readedText = driver.findElement(By.id("com.ushaqi.zhuishushenqi.adfree:id/reader_oper_top_title")).getText(); // 要获取的页面元素的文本内容
                     if (readedText != null & !readedText.equals("")) {
                         setDisplayed = true;
                         break;
