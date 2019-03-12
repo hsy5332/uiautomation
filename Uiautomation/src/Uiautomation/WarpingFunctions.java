@@ -105,8 +105,8 @@ public class WarpingFunctions {
 
     // 从一个大的字符串中，根据2个关键字，截取其中间的内容
     public static String getFiltedText(String bigText, String filterString) {
-        if (!bigText.equals(filterString)){
-            return  bigText;
+        if (!bigText.equals(filterString)) {
+            return bigText;
         }
 
         String result = "";
